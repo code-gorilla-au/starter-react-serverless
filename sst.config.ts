@@ -38,7 +38,8 @@ export default $config({
             },
             server: {
                 runtime: 'nodejs22.x',
-                architecture: "x86_64"
+                architecture: "x86_64",
+                install: ['bcrypt']
             },
             link: [bucket, appTable]
         });
