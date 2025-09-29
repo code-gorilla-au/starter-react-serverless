@@ -79,19 +79,25 @@
 			action="?/addApplicationTask"
 			method="POST"
 			use:enhance={() => {
-				return async ({ result }) => {
-					console.log(result);
+				return async ({ result, update }) => {
 					if (result.type === 'failure') {
+						const message = result?.data?.error as string;
 						toast.error('Task could not be added', {
-							description: result?.data?.error ?? ''
+							description: message,
+							position: 'top-center'
 						});
+					} else {
+						update({ invalidateAll: true });
 					}
-					await applyAction(result);
+
+					return await applyAction(result);
 				};
 			}}
 		>
 			<input type="hidden" name="applicationId" value={applicationId} />
-			<input type="hidden" name="dueDate" value={formData.dueDate?.toString()} />
+			{#if formData.dueDate}
+				<input type="hidden" name="dueDate" value={formData.dueDate?.toString()} />
+			{/if}
 			<button
 				type="button"
 				class="cursor-pointer rounded-full p-0.5 hover:bg-accent"

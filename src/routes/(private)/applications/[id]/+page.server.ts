@@ -26,7 +26,7 @@ const addApplicationNoteSchema = z.object({
 });
 
 const addApplicationTaskSchema = z.object({
-	name: z.string(),
+	name: z.string().min(1),
 	dueDate: z.coerce.date().optional(),
 	applicationId: z.string().min(1)
 });
