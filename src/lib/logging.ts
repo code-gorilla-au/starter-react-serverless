@@ -1,7 +1,8 @@
 import pino from 'pino';
+import { loadServerEnv } from '$lib/server/env';
 
-const level = 'debug';
+const config = loadServerEnv();
 
 export const logger = pino({
-	level
+	level: config.logLevel
 });
