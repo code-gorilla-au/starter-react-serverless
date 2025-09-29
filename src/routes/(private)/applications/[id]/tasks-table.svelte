@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { X } from '@lucide/svelte';
-	import { enhance } from '$app/forms';
+	import { enhance, applyAction } from '$app/forms';
 	import { ScrollArea } from '$components/ui/scroll-area';
 	import { Separator } from '$components/ui/separator';
 	import * as Table from '$lib/components/ui/table/index.js';
@@ -10,6 +10,7 @@
 	import { prettyDate, truncate } from '$lib/hooks/formats';
 	import { DatePicker } from '$components/date-picker';
 	import type { DateValue } from '@internationalized/date';
+	import { toast } from 'svelte-sonner';
 
 	type Props = {
 		applicationId: string;
@@ -77,11 +78,28 @@
 			class="flex items-center gap-2"
 			action="?/addApplicationTask"
 			method="POST"
-			use:enhance
+			use:enhance={() => {
+				return async ({ result, update }) => {
+					if (result.type === 'failure') {
+						const message = result?.data?.error as string;
+						toast.error('Task could not be added', {
+							description: message,
+							position: 'top-center'
+						});
+					} else {
+						update({ invalidateAll: true });
+					}
+
+					return await applyAction(result);
+				};
+			}}
 		>
 			<input type="hidden" name="applicationId" value={applicationId} />
-			<input type="hidden" name="dueDate" value={formData.dueDate?.toString()} />
+			{#if formData.dueDate}
+				<input type="hidden" name="dueDate" value={formData.dueDate?.toString()} />
+			{/if}
 			<button
+				type="button"
 				class="cursor-pointer rounded-full p-0.5 hover:bg-accent"
 				onclick={hideAddTaskForm}><X size={16} /></button
 			>

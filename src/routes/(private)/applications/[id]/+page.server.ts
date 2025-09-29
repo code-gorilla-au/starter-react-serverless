@@ -26,7 +26,7 @@ const addApplicationNoteSchema = z.object({
 });
 
 const addApplicationTaskSchema = z.object({
-	name: z.string(),
+	name: z.string().min(1),
 	dueDate: z.coerce.date().optional(),
 	applicationId: z.string().min(1)
 });
@@ -44,13 +44,11 @@ export const actions = {
 	addApplicationNote: async ({ locals, request }) => {
 		try {
 			if (!locals.session) {
-				fail(401, { error: 'Unauthorized' });
-				return;
+				return fail(401, { error: 'Unauthorized' });
 			}
 
 			if (!locals.defaultCampaign) {
-				fail(404, { error: 'Default Campaign not found' });
-				return;
+				return fail(404, { error: 'Default Campaign not found' });
 			}
 
 			const formData = await extractFormFromRequest(request, addApplicationNoteSchema);
@@ -65,31 +63,26 @@ export const actions = {
 				success: true
 			};
 		} catch (e) {
+			const err = e as Error;
+			logger.error({ error: err.message }, 'error adding note');
+
 			if (e instanceof z.ZodError) {
-				return {
+				return fail(400, {
 					error: z.prettifyError(e)
-				};
+				});
 			}
 
-			const err = e as Error;
-
-			logger.error({ error: err.message }, 'error adding note');
-			return {
-				success: false,
-				error: 'Something went wrong'
-			};
+			return fail(500, { error: 'Something went wrong' });
 		}
 	},
 	addApplicationTask: async ({ locals, request }) => {
 		try {
 			if (!locals.session) {
-				fail(401, { error: 'Unauthorized' });
-				return;
+				return fail(401, { error: 'Unauthorized' });
 			}
 
 			if (!locals.defaultCampaign) {
-				fail(404, { error: 'Default Campaign not found' });
-				return;
+				return fail(404, { error: 'Default Campaign not found' });
 			}
 
 			const formData = await extractFormFromRequest(request, addApplicationTaskSchema);
@@ -103,24 +96,19 @@ export const actions = {
 				success: true
 			};
 		} catch (e) {
-			if (e instanceof z.ZodError) {
-				return {
-					error: z.prettifyError(e)
-				};
-			}
-
 			const err = e as Error;
 			logger.error({ error: err.message }, 'could not add task to application');
-			return {
-				success: false,
-				error: 'Something went wrong'
-			};
+
+			if (e instanceof z.ZodError) {
+				return fail(400, { error: z.prettifyError(e) });
+			}
+
+			return fail(500, { error: 'Something went wrong' });
 		}
 	},
 	addTaskNote: async ({ locals, request }) => {
 		if (!locals.session) {
-			fail(401, { error: 'Unauthorized' });
-			return;
+			return fail(401, { error: 'Unauthorized' });
 		}
 
 		const formData = await extractFormFromRequest(request, addTaskNoteSchema);

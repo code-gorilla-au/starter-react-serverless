@@ -2,6 +2,9 @@
 	import type { PageProps } from './$types';
 	import { PageTitle } from '$components/page-title';
 	import { ApplicationsGrid } from '$components/applications';
+	import { Plus } from '@lucide/svelte';
+	import { Button } from '$components/ui/button';
+	import { goto } from '$app/navigation';
 
 	let { data }: PageProps = $props();
 
@@ -17,7 +20,16 @@
 	});
 </script>
 
-<PageTitle title="Applications" subtitle={resolveSubtitle} />
+<PageTitle title="Applications" subtitle={resolveSubtitle}>
+	<Button
+		onclick={async () => {
+			await goto('/applications/create');
+		}}
+		variant="ghost"
+		size="icon"
+		><Plus size={14} />
+	</Button>
+</PageTitle>
 
 <ApplicationsGrid {applications} />
 
