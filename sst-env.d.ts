@@ -5,17 +5,17 @@
 
 declare module "sst" {
   export interface Resource {
-    "DelightableApp": {
-      "type": "sst.aws.SvelteKit"
-      "url": string
+    "AppTable": {
+      "name": string
+      "type": "sst.aws.Dynamo"
     }
-    "DelightableAssets": {
+    "Assets": {
       "name": string
       "type": "sst.aws.Bucket"
     }
-    "delightable-app": {
-      "name": string
-      "type": "sst.aws.Dynamo"
+    "WebApp": {
+      "type": "sst.aws.SvelteKit"
+      "url": string
     }
   }
 }
