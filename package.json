@@ -64,9 +64,13 @@
     "@aws-sdk/client-dynamodb": "^3.893.0",
     "@aws-sdk/lib-dynamodb": "^3.893.0",
     "bcrypt": "^6.0.0",
+    "date-fns": "^4.1.0",
     "dynamodb-toolbox": "^2.7.1",
     "jose": "^6.1.0",
+    "mode-watcher": "^1.1.0",
+    "pino": "^9.12.0",
     "sst": "3.17.14",
-    "svelte-kit-sst": "2.43.5"
+    "svelte-kit-sst": "2.43.5",
+    "zod": "^3.25.76"
   }
 }
