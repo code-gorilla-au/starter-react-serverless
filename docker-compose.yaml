@@ -1,0 +1,16 @@
+services:
+    dynamodb:
+        networks:
+            - local-dev
+        command: '-jar DynamoDBLocal.jar -sharedDb -dbPath ./data'
+        image: 'amazon/dynamodb-local:latest'
+        container_name: delightable-dynamodb
+        ports:
+            - '8110:8000'
+        volumes:
+            - ./.dynamodb:/home/dynamodblocal/data
+        working_dir: /home/dynamodblocal
+networks:
+    local-dev:
+        external: false
+        name: local-dev
