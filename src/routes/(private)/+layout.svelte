@@ -4,10 +4,26 @@
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { type LayoutProps } from './$types';
+	import { page } from '$app/state';
 
 	let { data, children }: LayoutProps = $props();
 
 	let campaigns = $derived(data.campaigns);
+	let campaignName = $derived(data?.defaultCampaign?.name ?? 'Campaign');
+	let pageParts = $derived(
+		page.url.pathname
+			.split('/')
+			.map((part) => {
+				for (const param of Object.values(page.params)) {
+					if (part === param) {
+						return '...';
+					}
+				}
+
+				return part;
+			})
+			.filter((part) => part !== '')
+	);
 	let session = $derived(data.session);
 </script>
 
@@ -24,13 +40,17 @@
 					<Breadcrumb.List>
 						<Breadcrumb.Item class="hidden md:block">
 							<Breadcrumb.Link href="/campaigns">
-								Building Your Application
+								{campaignName}
 							</Breadcrumb.Link>
 						</Breadcrumb.Item>
-						<Breadcrumb.Separator class="hidden md:block" />
-						<Breadcrumb.Item>
-							<Breadcrumb.Page>Data Fetching</Breadcrumb.Page>
-						</Breadcrumb.Item>
+						{#each pageParts as part (part)}
+							<Breadcrumb.Separator class="hidden md:block" />
+							<Breadcrumb.Item class="hidden md:block">
+								<Breadcrumb.Link>
+									{part}
+								</Breadcrumb.Link>
+							</Breadcrumb.Item>
+						{/each}
 					</Breadcrumb.List>
 				</Breadcrumb.Root>
 			</div>

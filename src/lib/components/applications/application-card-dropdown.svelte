@@ -23,6 +23,9 @@
 			<DropdownMenu.Item>
 				<a class="w-full" href={`/applications/${application.id}`}> View </a>
 			</DropdownMenu.Item>
+			<DropdownMenu.Item>
+				<a class="w-full" href={`/applications/${application.id}/edit`}> Edit </a>
+			</DropdownMenu.Item>
 			<DropdownMenu.Item>Archive</DropdownMenu.Item>
 			<DropdownMenu.Item>
 				<a class="w-full" href={`/applications/${application.id}/delete`}>Delete</a>
