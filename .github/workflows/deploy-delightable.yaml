@@ -25,9 +25,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: package.json
+          cache: npm
       - run: corepack enable
 
-      - run: npm ci --omit=dev
+      - run: npm ci
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
