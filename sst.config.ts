@@ -37,7 +37,6 @@ export default $config({
                 SECRET_APP_SIGNING_TOKEN: process.env.SECRET_APP_SIGNING_TOKEN ?? ''
             },
             server: {
-                architecture: 'arm64',
                 runtime: 'nodejs22.x'
             },
             link: [bucket, appTable]
