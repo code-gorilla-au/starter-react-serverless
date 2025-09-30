@@ -31,7 +31,7 @@ export function extractUrlParts(url: string, page: { params: Record<string, stri
 		.map((part) => {
 			for (const param of Object.values(page.params)) {
 				if (part === param) {
-					return '...';
+					return '';
 				}
 			}
 

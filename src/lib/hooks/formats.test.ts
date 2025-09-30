@@ -127,7 +127,7 @@ describe('Hooks: formats', () => {
 		it('should split URL into parts and filter empty parts', () => {
 			const url = '/users/123/profile';
 			const page = { params: {} };
-			
+
 			const result = extractUrlParts(url, page);
 			expect(result).toEqual(['users', '123', 'profile']);
 		});
@@ -135,23 +135,23 @@ describe('Hooks: formats', () => {
 		it('should replace matching parameter values with "..."', () => {
 			const url = '/users/123/profile';
 			const page = { params: { id: '123' } };
-			
+
 			const result = extractUrlParts(url, page);
-			expect(result).toEqual(['users', '...', 'profile']);
+			expect(result).toEqual(['users', 'profile']);
 		});
 
 		it('should handle multiple matching parameters', () => {
 			const url = '/users/123/posts/456';
 			const page = { params: { userId: '123', postId: '456' } };
-			
+
 			const result = extractUrlParts(url, page);
-			expect(result).toEqual(['users', '...', 'posts', '...']);
+			expect(result).toEqual(['users', 'posts']);
 		});
 
 		it('should handle URL with no matching parameters', () => {
 			const url = '/users/123/profile';
 			const page = { params: { otherId: '999' } };
-			
+
 			const result = extractUrlParts(url, page);
 			expect(result).toEqual(['users', '123', 'profile']);
 		});
@@ -159,7 +159,7 @@ describe('Hooks: formats', () => {
 		it('should handle empty URL', () => {
 			const url = '';
 			const page = { params: {} };
-			
+
 			const result = extractUrlParts(url, page);
 			expect(result).toEqual([]);
 		});
@@ -167,7 +167,7 @@ describe('Hooks: formats', () => {
 		it('should handle root URL', () => {
 			const url = '/';
 			const page = { params: {} };
-			
+
 			const result = extractUrlParts(url, page);
 			expect(result).toEqual([]);
 		});
@@ -175,7 +175,7 @@ describe('Hooks: formats', () => {
 		it('should filter out empty parts from URL with multiple slashes', () => {
 			const url = '//users//123//profile//';
 			const page = { params: {} };
-			
+
 			const result = extractUrlParts(url, page);
 			expect(result).toEqual(['users', '123', 'profile']);
 		});
@@ -183,15 +183,15 @@ describe('Hooks: formats', () => {
 		it('should handle URL with special characters in parts', () => {
 			const url = '/users/user@email.com/profile';
 			const page = { params: { email: 'user@email.com' } };
-			
+
 			const result = extractUrlParts(url, page);
-			expect(result).toEqual(['users', '...', 'profile']);
+			expect(result).toEqual(['users', 'profile']);
 		});
 
 		it('should handle empty params object', () => {
 			const url = '/users/123/profile';
 			const page = { params: {} };
-			
+
 			const result = extractUrlParts(url, page);
 			expect(result).toEqual(['users', '123', 'profile']);
 		});
@@ -199,7 +199,7 @@ describe('Hooks: formats', () => {
 		it('should handle URL part that partially matches parameter', () => {
 			const url = '/users/123456/profile';
 			const page = { params: { id: '123' } };
-			
+
 			const result = extractUrlParts(url, page);
 			expect(result).toEqual(['users', '123456', 'profile']);
 		});
@@ -207,9 +207,9 @@ describe('Hooks: formats', () => {
 		it('should handle URL with numeric and string parameters', () => {
 			const url = '/category/electronics/product/laptop123';
 			const page = { params: { category: 'electronics', productId: 'laptop123' } };
-			
+
 			const result = extractUrlParts(url, page);
-			expect(result).toEqual(['category', '...', 'product', '...']);
+			expect(result).toEqual(['category', 'product']);
 		});
 	});
 });
