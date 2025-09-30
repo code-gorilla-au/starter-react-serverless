@@ -2,6 +2,7 @@
 	import { Card, CardContent, CardHeader, CardTitle } from '$components/ui/card';
 	import ApplicationCardDropdown from './application-card-dropdown.svelte';
 	import type { ApplicationDto } from '$lib/applications/types';
+	import { formatDate } from '$lib/hooks/formats';
 
 	type Props = {
 		application: ApplicationDto;
@@ -29,6 +30,10 @@
 		<div class="card-row">
 			<p class="row-label">Salary</p>
 			<p class="row-value">{application.salary}</p>
+		</div>
+		<div class="card-row">
+			<p class="row-label">Applied</p>
+			<p class="row-value">{formatDate(application.startDate)}</p>
 		</div>
 	</CardContent>
 </Card>
