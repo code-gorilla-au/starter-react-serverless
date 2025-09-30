@@ -5,25 +5,13 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { type LayoutProps } from './$types';
 	import { page } from '$app/state';
+	import { extractUrlParts } from '$lib/hooks/formats';
 
 	let { data, children }: LayoutProps = $props();
 
 	let campaigns = $derived(data.campaigns);
 	let campaignName = $derived(data?.defaultCampaign?.name ?? 'Campaign');
-	let pageParts = $derived(
-		page.url.pathname
-			.split('/')
-			.map((part) => {
-				for (const param of Object.values(page.params)) {
-					if (part === param) {
-						return '...';
-					}
-				}
-
-				return part;
-			})
-			.filter((part) => part !== '')
-	);
+	let pageParts = $derived(extractUrlParts(page.url.pathname, page));
 	let session = $derived(data.session);
 </script>
 
@@ -46,7 +34,7 @@
 						{#each pageParts as part (part)}
 							<Breadcrumb.Separator class="hidden md:block" />
 							<Breadcrumb.Item class="hidden md:block">
-								<Breadcrumb.Link>
+								<Breadcrumb.Link class="capitalize">
 									{part}
 								</Breadcrumb.Link>
 							</Breadcrumb.Item>

@@ -24,3 +24,18 @@ export function truncate(str: string) {
 	const sub = str.substring(0, maxLength);
 	return `${sub}...`;
 }
+
+export function extractUrlParts(url: string, page: { params: Record<string, string> }) {
+	return url
+		.split('/')
+		.map((part) => {
+			for (const param of Object.values(page.params)) {
+				if (part === param) {
+					return '...';
+				}
+			}
+
+			return part;
+		})
+		.filter((part) => part !== '');
+}
