@@ -116,7 +116,7 @@
 		</div>
 	</form>
 	<div class="dashboard-card min-w-sm flex-2">
-		<EditableNotes formAction="?/updateApplicationNotes" notes={application.notes} />
+		<EditableNotes formAction="?/updateApplicationNote" notes={application.notes} />
 	</div>
 </div>
 <svelte:head>

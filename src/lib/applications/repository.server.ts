@@ -33,6 +33,11 @@ export interface ApplicationRepository {
 	deleteApplication(params: { campaignId: string; applicationId: string }): Promise<StoreAction>;
 	getTasksForApplication(applicationId: string): Promise<StoreAction<TaskEntity[]>>;
 	addNoteToApplication(campaignId: string, applicationId: string, content: string): Promise<void>;
+	updateApplicationNote(params: {
+		campaignId: string;
+		applicationId: string;
+		note: Omit<NotesEntity, 'createdAt' | 'updatedAt'>;
+	}): Promise<StoreAction>;
 	getApplicationsForCampaign(campaignId: string): Promise<StoreAction<ApplicationEntity[]>>;
 	insertTask(task: Omit<TaskEntity, 'createdAt' | 'updatedAt'>): Promise<StoreAction<TaskEntity>>;
 	insertTaskNote(params: {
@@ -150,6 +155,69 @@ export class ApplicationDBRepo implements ApplicationRepository {
 		const cmd = applicationEntity.build(UpdateItemCommand).item(app);
 
 		await cmd.send();
+	}
+
+	async updateApplicationNote(params: {
+		campaignId: string;
+		applicationId: string;
+		note: Omit<NotesEntity, 'createdAt' | 'updatedAt'>;
+	}): Promise<StoreAction> {
+		this.#log.debug(
+			{
+				campaignId: params.campaignId,
+				applicationId: params.applicationId,
+				noteId: params.note.id
+			},
+			"updating application's note"
+		);
+
+		const model = await this.getApplicationById(params.applicationId, params.campaignId);
+		if (model.error) {
+			this.#log.error({ error: model.error.message }, 'could not get application by id');
+			return {
+				error: model.error
+			};
+		}
+
+		if (!model.data) {
+			const err = new ItemNotFoundError(params.applicationId, params.campaignId);
+
+			this.#log.error(
+				{
+					error: err.message
+				},
+				'application not found'
+			);
+
+			return {
+				error: err
+			};
+		}
+
+		const notes = model.data?.notes ?? [];
+		const updatedNotes = [...notes].map((n) => {
+			if (n.id === params.note.id) {
+				return {
+					...n,
+					content: params.note.content,
+					updatedAt: new Date().toISOString()
+				};
+			}
+
+			return n;
+		});
+
+		const cmd = applicationEntity.build(UpdateItemCommand).item({
+			id: params.applicationId,
+			campaignId: params.campaignId,
+			notes: updatedNotes
+		});
+
+		await cmd.send();
+
+		return {
+			data: undefined
+		};
 	}
 
 	async getApplicationsForCampaign(

@@ -103,6 +103,22 @@ export class ApplicationsService {
 		await this.#repo.addNoteToApplication(campaignId, applicationId, content);
 	}
 
+	async updateApplicationNote(params: {
+		campaignId: string;
+		applicationId: string;
+		noteId: string;
+		content: string;
+	}) {
+		await this.#repo.updateApplicationNote({
+			campaignId: params.campaignId,
+			applicationId: params.applicationId,
+			note: {
+				id: params.noteId,
+				content: params.content
+			}
+		});
+	}
+
 	async getApplications(campaignId: string): Promise<ApplicationDto[]> {
 		const models = await this.#repo.getApplicationsForCampaign(campaignId);
 		if (models.error) {

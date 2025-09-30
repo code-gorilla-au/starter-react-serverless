@@ -18,7 +18,7 @@ export const load = async ({ locals, params }) => {
 	};
 };
 
-const formSchema = z.object({
+const updateApplicationFormSchema = z.object({
 	id: z.string().min(1),
 	company: z.string().min(1),
 	position: z.string().min(1),
@@ -26,6 +26,11 @@ const formSchema = z.object({
 	salary: z.string().optional().nullable(),
 	url: z.string(),
 	startDate: z.coerce.date()
+});
+
+const updateApplicationNoteSchema = z.object({
+	noteId: z.string().min(1),
+	content: z.string()
 });
 
 export const actions = {
@@ -42,12 +47,20 @@ export const actions = {
 	 * application page upon successful completion.
 	 */
 	updateApplication: async ({ locals, request, params }) => {
+		if (!locals.session) {
+			return fail(401, { message: 'Unauthorized' });
+		}
+
 		if (!locals.defaultCampaign) {
 			return fail(404, { message: 'No default campaign found' });
 		}
 
+		if (!params.id) {
+			return fail(400, { message: 'Application id is required' });
+		}
+
 		try {
-			const formData = await extractFormFromRequest(request, formSchema);
+			const formData = await extractFormFromRequest(request, updateApplicationFormSchema);
 
 			await locals.appsSvc.updateApplication(locals.defaultCampaign.id, {
 				...formData,
@@ -69,5 +82,41 @@ export const actions = {
 		}
 
 		redirect(301, `/applications/${params.id}`);
+	},
+	updateApplicationNote: async ({ locals, request, params }) => {
+		if (!locals.session) {
+			return fail(401, { message: 'Unauthorized' });
+		}
+
+		if (!locals.defaultCampaign) {
+			return fail(404, { message: 'No default campaign found' });
+		}
+
+		if (!params.id) {
+			return fail(400, { message: 'Application id is required' });
+		}
+
+		try {
+			const formData = await extractFormFromRequest(request, updateApplicationNoteSchema);
+			await locals.appsSvc.updateApplicationNote({
+				campaignId: locals.defaultCampaign.id,
+				applicationId: params.id,
+				noteId: formData.noteId,
+				content: formData.content
+			});
+		} catch (e) {
+			const err = e as Error;
+			logger.error({ error: err.message }, 'error updating application note');
+
+			if (e instanceof ZodError) {
+				return fail(400, {
+					error: prettifyError(e)
+				});
+			}
+
+			return fail(400, {
+				error: err.message
+			});
+		}
 	}
 } satisfies Actions;
