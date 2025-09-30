@@ -2,14 +2,45 @@
 	import type { PageProps } from './$types';
 	import { PageTitle } from '$components/page-title';
 	import { ApplicationsGrid } from '$components/applications';
-	import { Plus } from '@lucide/svelte';
+	import { Plus, Search, X } from '@lucide/svelte';
 	import { Button } from '$components/ui/button';
 	import { goto } from '$app/navigation';
+	import { BaseInput } from '$components/base-input/index.js';
+	import { SimpleFilter } from '$lib/hooks/filters.svelte';
+	import { debouncedInput } from '$lib/forms';
 
 	let { data }: PageProps = $props();
 
 	let defaultCampaign = $derived(data.defaultCampaign);
-	let applications = $derived(data.applications);
+
+	let search = $state('');
+
+	const filteredApps = new SimpleFilter(data.applications);
+	const debouncedSearch = debouncedInput((input: string) => {
+		filteredApps.filterBy((app) => {
+			if (input === '') {
+				return true;
+			}
+
+			for (const [key, value] of Object.entries(app)) {
+				if (key === 'notes') {
+					continue;
+				}
+
+				if (typeof value !== 'string') {
+					continue;
+				}
+
+				const term = input.toLowerCase();
+				const searchField = value.toLowerCase();
+				if (searchField.includes(term)) {
+					return true;
+				}
+			}
+
+			return false;
+		});
+	}, 300);
 
 	let resolveSubtitle = $derived.by(() => {
 		if (defaultCampaign) {
@@ -21,17 +52,43 @@
 </script>
 
 <PageTitle title="Applications" subtitle={resolveSubtitle}>
-	<Button
-		onclick={async () => {
-			await goto('/applications/create');
-		}}
-		variant="ghost"
-		size="icon"
-		><Plus size={14} />
-	</Button>
+	<div class="flex items-center gap-6">
+		<div class="flex items-center gap-2">
+			{#if search !== ''}
+				<button
+					class="rounded-full bg-accent p-1"
+					onclick={(e: Event) => {
+						e.stopPropagation();
+						search = '';
+						debouncedSearch(search);
+					}}
+				>
+					<X size={14} />
+				</button>
+			{:else}
+				<Search />
+			{/if}
+
+			<BaseInput
+				bind:value={search}
+				oninput={() => {
+					debouncedSearch(search);
+				}}
+			/>
+		</div>
+		<Button
+			onclick={async () => {
+				await goto('/applications/create');
+			}}
+			variant="ghost"
+			size="icon"
+		>
+			<Plus size={14} />
+		</Button>
+	</div>
 </PageTitle>
 
-<ApplicationsGrid {applications} />
+<ApplicationsGrid applications={filteredApps.data} />
 
 <svelte:head>
 	<title>Applications | Delightable</title>
