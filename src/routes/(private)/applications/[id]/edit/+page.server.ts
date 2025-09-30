@@ -43,8 +43,7 @@ export const actions = {
 	 */
 	updateApplication: async ({ locals, request, params }) => {
 		if (!locals.defaultCampaign) {
-			fail(404, { message: 'No default campaign found' });
-			return;
+			return fail(404, { message: 'No default campaign found' });
 		}
 
 		try {
@@ -55,18 +54,18 @@ export const actions = {
 				notes: []
 			});
 		} catch (e) {
-			if (e instanceof ZodError) {
-				return {
-					error: prettifyError(e)
-				};
-			}
-
 			const err = e as Error;
 			logger.error({ error: err.message }, 'could not update application');
 
-			return {
+			if (e instanceof ZodError) {
+				return fail(400, {
+					error: prettifyError(e)
+				});
+			}
+
+			return fail(400, {
 				error: err.message
-			};
+			});
 		}
 
 		redirect(301, `/applications/${params.id}`);
