@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { flip } from 'svelte/animate';
 	import type { ApplicationDto } from '$lib/applications/types';
 	import { EmptySlate } from '$components/empty-slate';
 	import { Grid } from '$components/grid';
@@ -24,7 +25,9 @@
 {:else}
 	<Grid>
 		{#each applications as application (application.id)}
-			<ApplicationCard {application} />
+			<div animate:flip={{ duration: 200 }}>
+				<ApplicationCard {application} />
+			</div>
 		{/each}
 	</Grid>
 {/if}

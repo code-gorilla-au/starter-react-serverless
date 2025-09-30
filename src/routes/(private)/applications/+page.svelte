@@ -2,12 +2,12 @@
 	import type { PageProps } from './$types';
 	import { PageTitle } from '$components/page-title';
 	import { ApplicationsGrid } from '$components/applications';
-	import { Plus, Search, X } from '@lucide/svelte';
+	import { Plus } from '@lucide/svelte';
 	import { Button } from '$components/ui/button';
 	import { goto } from '$app/navigation';
-	import { BaseInput } from '$components/base-input/index.js';
 	import { SimpleFilter } from '$lib/hooks/filters.svelte';
 	import { debouncedInput } from '$lib/forms';
+	import { Searchbar } from '$components/searchbar/index.js';
 
 	let { data }: PageProps = $props();
 
@@ -40,7 +40,7 @@
 
 			return false;
 		});
-	}, 300);
+	}, 50);
 
 	let resolveSubtitle = $derived.by(() => {
 		if (defaultCampaign) {
@@ -53,29 +53,14 @@
 
 <PageTitle title="Applications" subtitle={resolveSubtitle}>
 	<div class="flex items-center gap-6">
-		<div class="flex items-center gap-2">
-			{#if search !== ''}
-				<button
-					class="rounded-full bg-accent p-1"
-					onclick={(e: Event) => {
-						e.stopPropagation();
-						search = '';
-						debouncedSearch(search);
-					}}
-				>
-					<X size={14} />
-				</button>
-			{:else}
-				<Search />
-			{/if}
-
-			<BaseInput
-				bind:value={search}
-				oninput={() => {
-					debouncedSearch(search);
-				}}
-			/>
-		</div>
+		<Searchbar
+			bind:value={search}
+			onSearch={debouncedSearch}
+			onClear={() => {
+				search = '';
+				debouncedSearch(search);
+			}}
+		/>
 		<Button
 			onclick={async () => {
 				await goto('/applications/create');
