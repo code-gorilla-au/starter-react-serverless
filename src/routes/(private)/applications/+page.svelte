@@ -31,7 +31,7 @@
 					continue;
 				}
 
-				const term = input.toLowerCase();
+				const term = input.toLowerCase().trim();
 				const searchField = value.toLowerCase();
 				if (searchField.includes(term)) {
 					return true;
@@ -40,7 +40,7 @@
 
 			return false;
 		});
-	}, 50);
+	}, 10);
 
 	let resolveSubtitle = $derived.by(() => {
 		if (defaultCampaign) {
