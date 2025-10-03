@@ -43,19 +43,27 @@ export class SimpleFilter<T> {
 	}
 
 	/**
+	 * Applies the provided filter function to the current dataset and filters it based on the criteria defined in the function.
+	 */
+	filterBy(filterFn: FilterFunc<T>) {
+		this.#filterFn = filterFn;
+		this.applyFilter();
+	}
+
+	/**
+	 * Subscribe to data changes and update the internal state, apply any current filters
+	 */
+	subscribe(data: T[]) {
+		this.#internal.initData = data;
+		this.applyFilter();
+	}
+
+	/**
 	 * Clears the current filter function and resets the filter state.
 	 *
 	 */
 	reset() {
 		this.#filterFn = undefined;
-		this.applyFilter();
-	}
-
-	/**
-	 * Applies the provided filter function to the current dataset and filters it based on the criteria defined in the function.
-	 */
-	filterBy(filterFn: FilterFunc<T>) {
-		this.#filterFn = filterFn;
 		this.applyFilter();
 	}
 
