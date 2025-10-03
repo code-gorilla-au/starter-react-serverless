@@ -42,6 +42,13 @@ describe('filters', () => {
 
 			expect(filter.data).toEqual([2, 3]);
 		});
+		it('should update init data on subscription', () => {
+			const filter = new SimpleFilter([1, 2, 3]);
+			expect(filter.data).toEqual([1, 2, 3]);
+
+			filter.subscribe([4, 5, 6]);
+			expect(filter.data).toEqual([4, 5, 6]);
+		});
 	});
 
 	describe('TagsFilter()', () => {
