@@ -35,6 +35,19 @@
 		return 'bg-secondary text-secondary-foreground';
 	}
 
+	let viewOption = $state<'grid' | 'table'>('grid');
+
+	function styleViewOption(option: 'grid' | 'table') {
+		if (viewOption === option) {
+			return 'bg-primary text-primary-foreground';
+		}
+		return 'bg-secondary text-secondary-foreground';
+	}
+
+	function updateViewOption(option: 'grid' | 'table') {
+		viewOption = option;
+	}
+
 	function orderedActiveApplications() {
 		return [...data.applications]
 			.sort((a, b) => {
@@ -97,12 +110,29 @@
 	</button>
 </div>
 
-<ApplicationsGrid applications={activeApplicationsFilter.data} />
-<ApplicationsTable applications={activeApplicationsFilter.data} />
+<div class="my-4">
+	<span class="text-xs">View:</span>
+	<button onclick={() => updateViewOption('grid')}>
+		<Badge class={styleViewOption('grid')}>Grid</Badge>
+	</button>
+	<button onclick={() => updateViewOption('table')}>
+		<Badge class={styleViewOption('table')}>Table</Badge>
+	</button>
+</div>
+
+{#if viewOption === 'grid'}
+	<ApplicationsGrid applications={activeApplicationsFilter.data} />
+{:else}
+	<ApplicationsTable applications={activeApplicationsFilter.data} />
+{/if}
 
 <h3 class="heading-3 mt-10 mb-5">Complete applications</h3>
 
-<ApplicationsGrid applications={completeApplications} />
+{#if viewOption === 'grid'}
+	<ApplicationsGrid applications={completeApplications} />
+{:else}
+	<ApplicationsTable applications={completeApplications} />
+{/if}
 
 <svelte:head>
 	<title>Applications | Delightable</title>
