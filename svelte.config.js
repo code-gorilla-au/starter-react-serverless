@@ -16,6 +16,14 @@ const config = {
 			'@/*': './path/to/lib/*',
 			$components: './src/lib/components',
 			$design: './src/app.css'
+		},
+		experimental: {
+			remoteFunctions: true
+		}
+	},
+	compilerOptions: {
+		experimental: {
+			async: true
 		}
 	}
 };
