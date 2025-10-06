@@ -98,6 +98,16 @@
 	</div>
 </PageTitle>
 
+<div class="my-4">
+	<span class="text-xs">View:</span>
+	<button onclick={() => updateViewOption('grid')}>
+		<Badge class={styleViewOption('grid')}>Grid</Badge>
+	</button>
+	<button onclick={() => updateViewOption('table')}>
+		<Badge class={styleViewOption('table')}>Table</Badge>
+	</button>
+</div>
+
 <h3 class="heading-3">Active applications</h3>
 
 <div class="my-4">
@@ -107,16 +117,6 @@
 	</button>
 	<button onclick={() => updateSortOption('descending')}>
 		<Badge class={styleFilterOption('descending')}>Descending</Badge>
-	</button>
-</div>
-
-<div class="my-4">
-	<span class="text-xs">View:</span>
-	<button onclick={() => updateViewOption('grid')}>
-		<Badge class={styleViewOption('grid')}>Grid</Badge>
-	</button>
-	<button onclick={() => updateViewOption('table')}>
-		<Badge class={styleViewOption('table')}>Table</Badge>
 	</button>
 </div>
 
