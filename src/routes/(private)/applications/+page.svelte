@@ -11,9 +11,17 @@
 	import { filterApplication } from './filters.js';
 	import { compareAsc, compareDesc } from 'date-fns';
 	import { Badge } from '$components/ui/badge/index.js';
+	import { ApplicationsTable } from '$components/applications/index.js';
 
 	let { data }: PageProps = $props();
 	let defaultCampaign = $derived(data.defaultCampaign);
+	let resolveSubtitle = $derived.by(() => {
+		if (defaultCampaign) {
+			return `Applications for ${defaultCampaign.name}`;
+		}
+
+		return 'Applications for a campaign';
+	});
 
 	let search = $state('');
 
@@ -53,14 +61,6 @@
 		filterOption = option;
 		activeApplicationsFilter.subscribe(orderedActiveApplications());
 	}
-
-	let resolveSubtitle = $derived.by(() => {
-		if (defaultCampaign) {
-			return `Applications for ${defaultCampaign.name}`;
-		}
-
-		return 'Applications for a campaign';
-	});
 </script>
 
 <PageTitle title="Applications" subtitle={resolveSubtitle}>
@@ -98,6 +98,7 @@
 </div>
 
 <ApplicationsGrid applications={activeApplicationsFilter.data} />
+<ApplicationsTable applications={activeApplicationsFilter.data} />
 
 <h3 class="heading-3 mt-10 mb-5">Complete applications</h3>
 
