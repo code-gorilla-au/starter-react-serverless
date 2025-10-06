@@ -10,8 +10,8 @@
 	import { Searchbar } from '$components/searchbar/index.js';
 	import { filterApplication } from './filters.js';
 	import { compareAsc, compareDesc } from 'date-fns';
-	import { Badge } from '$components/ui/badge/index.js';
 	import { ApplicationsTable } from '$components/applications/index.js';
+	import { ArrowDownNarrowWide, ArrowUpNarrowWide, Rows2, Grid2x2 } from '@lucide/svelte';
 
 	let { data }: PageProps = $props();
 	let defaultCampaign = $derived(data.defaultCampaign);
@@ -27,21 +27,24 @@
 
 	let filterOption = $state<'ascending' | 'descending'>('descending');
 
+	const activeOptionStyle = 'bg-primary text-primary-foreground rounded p-0.5';
+	const inactiveOptionStyle = 'bg-secondary text-secondary-foreground rounded p-0.5';
+
 	function styleFilterOption(option: 'ascending' | 'descending') {
 		if (filterOption === option) {
-			return 'bg-primary text-primary-foreground';
+			return activeOptionStyle;
 		}
 
-		return 'bg-secondary text-secondary-foreground';
+		return inactiveOptionStyle;
 	}
 
 	let viewOption = $state<'grid' | 'table'>('grid');
 
 	function styleViewOption(option: 'grid' | 'table') {
 		if (viewOption === option) {
-			return 'bg-primary text-primary-foreground';
+			return activeOptionStyle;
 		}
-		return 'bg-secondary text-secondary-foreground';
+		return inactiveOptionStyle;
 	}
 
 	function updateViewOption(option: 'grid' | 'table') {
@@ -98,25 +101,25 @@
 	</div>
 </PageTitle>
 
-<div class="my-4">
+<div class="my-4 flex items-center gap-2">
 	<span class="text-xs">View:</span>
 	<button onclick={() => updateViewOption('grid')}>
-		<Badge class={styleViewOption('grid')}>Grid</Badge>
+		<Grid2x2 class={styleViewOption('grid')} />
 	</button>
 	<button onclick={() => updateViewOption('table')}>
-		<Badge class={styleViewOption('table')}>Table</Badge>
+		<Rows2 class={styleViewOption('table')} />
 	</button>
 </div>
 
 <h3 class="heading-3">Active applications</h3>
 
-<div class="my-4">
+<div class="my-4 flex items-center gap-2">
 	<span class="text-xs">Sort by:</span>
 	<button onclick={() => updateSortOption('ascending')}>
-		<Badge class={styleFilterOption('ascending')}>Ascending</Badge>
+		<ArrowUpNarrowWide class={styleFilterOption('ascending')} />
 	</button>
 	<button onclick={() => updateSortOption('descending')}>
-		<Badge class={styleFilterOption('descending')}>Descending</Badge>
+		<ArrowDownNarrowWide class={styleFilterOption('descending')} />
 	</button>
 </div>
 
