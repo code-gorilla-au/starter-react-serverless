@@ -101,7 +101,7 @@
 	</div>
 </PageTitle>
 
-<div class="my-4 flex items-center gap-2">
+<div class="my-4 flex items-center justify-end gap-2">
 	<span class="text-xs">View:</span>
 	<button onclick={() => updateViewOption('grid')}>
 		<Grid2x2 class={styleViewOption('grid')} />
@@ -111,16 +111,17 @@
 	</button>
 </div>
 
-<h3 class="heading-3">Active applications</h3>
-
-<div class="my-4 flex items-center gap-2">
-	<span class="text-xs">Sort by:</span>
-	<button onclick={() => updateSortOption('ascending')}>
-		<ArrowUpNarrowWide class={styleFilterOption('ascending')} />
-	</button>
-	<button onclick={() => updateSortOption('descending')}>
-		<ArrowDownNarrowWide class={styleFilterOption('descending')} />
-	</button>
+<div class="my-4 flex items-center justify-between">
+	<h3 class="heading-3">Active applications</h3>
+	<div class="flex items-center gap-2">
+		<span class="text-xs">Sort by:</span>
+		<button onclick={() => updateSortOption('ascending')}>
+			<ArrowUpNarrowWide class={styleFilterOption('ascending')} />
+		</button>
+		<button onclick={() => updateSortOption('descending')}>
+			<ArrowDownNarrowWide class={styleFilterOption('descending')} />
+		</button>
+	</div>
 </div>
 
 {#if viewOption === 'grid'}

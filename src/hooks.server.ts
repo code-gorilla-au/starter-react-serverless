@@ -3,7 +3,7 @@ import { applicationServiceFactory } from '$lib/applications/service.server';
 import { sequence } from '@sveltejs/kit/hooks';
 import { userServiceFactory } from '$lib/users/service.server';
 import { AUTH_COOKIE_NAME, AuthService } from '$lib/server/auth';
-import { logger } from '$lib/logging';
+import { logger } from '$lib/logging.server';
 import { campaignServiceFactory } from '$lib/campaigns/service.server';
 
 const appsSvc = applicationServiceFactory();

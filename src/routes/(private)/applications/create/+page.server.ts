@@ -1,7 +1,7 @@
 import { type Actions, redirect } from '@sveltejs/kit';
 import { z } from 'zod/v4';
 import { extractFormFromRequest } from '$lib/forms';
-import { logger } from '$lib/logging';
+import { logger } from '$lib/logging.server';
 
 const formSchema = z.object({
 	campaignId: z.string(),

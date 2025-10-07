@@ -1,7 +1,7 @@
 import { z } from 'zod/v4';
 import { type Actions, redirect } from '@sveltejs/kit';
 import type { UserSession } from '$lib/server/auth';
-import { logger } from '$lib/logging';
+import { logger } from '$lib/logging.server';
 import { extractFormFromRequest } from '$lib/forms';
 
 const formSchema = z.object({

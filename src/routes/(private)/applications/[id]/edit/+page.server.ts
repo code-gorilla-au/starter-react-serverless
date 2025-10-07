@@ -1,7 +1,7 @@
 import { type Actions, error, fail, redirect } from '@sveltejs/kit';
 import { extractFormFromRequest } from '$lib/forms';
 import { prettifyError, ZodError, z } from 'zod/v4';
-import { logger } from '$lib/logging';
+import { logger } from '$lib/logging.server';
 import { applicationDtoStatus } from '$lib/applications/types';
 
 export const load = async ({ locals, params }) => {
