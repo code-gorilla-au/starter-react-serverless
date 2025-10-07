@@ -1,4 +1,4 @@
-import { logger } from '$lib/logging';
+import { logger } from '$lib/logging.server';
 import {
 	ItemNotFoundError,
 	type StoreAction,

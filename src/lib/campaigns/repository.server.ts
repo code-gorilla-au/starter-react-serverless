@@ -9,7 +9,7 @@ import {
 } from '$lib/server/database';
 import { GetItemCommand, PutTransaction, QueryCommand } from 'dynamodb-toolbox';
 import { execute } from 'dynamodb-toolbox/entity/actions/transactWrite';
-import { logger } from '$lib/logging';
+import { logger } from '$lib/logging.server';
 
 export interface CampaignRepository {
 	insertCampaign(

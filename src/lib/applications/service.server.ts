@@ -1,5 +1,5 @@
 import { ApplicationDBRepo, type ApplicationRepository } from '$lib/applications/repository.server';
-import { logger } from '$lib/logging';
+import { logger } from '$lib/logging.server';
 import {
 	type ApplicationDto,
 	applicationDtoListSchema,

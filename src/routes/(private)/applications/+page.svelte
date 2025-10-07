@@ -10,21 +10,45 @@
 	import { Searchbar } from '$components/searchbar/index.js';
 	import { filterApplication } from './filters.js';
 	import { compareAsc, compareDesc } from 'date-fns';
-	import { Badge } from '$components/ui/badge/index.js';
+	import { ApplicationsTable } from '$components/applications/index.js';
+	import { ArrowDownNarrowWide, ArrowUpNarrowWide, Rows2, Grid2x2 } from '@lucide/svelte';
 
 	let { data }: PageProps = $props();
 	let defaultCampaign = $derived(data.defaultCampaign);
+	let resolveSubtitle = $derived.by(() => {
+		if (defaultCampaign) {
+			return `Applications for ${defaultCampaign.name}`;
+		}
+
+		return 'Applications for a campaign';
+	});
 
 	let search = $state('');
 
 	let filterOption = $state<'ascending' | 'descending'>('descending');
 
+	const activeOptionStyle = 'bg-primary text-primary-foreground rounded p-0.5';
+	const inactiveOptionStyle = 'bg-secondary text-secondary-foreground rounded p-0.5';
+
 	function styleFilterOption(option: 'ascending' | 'descending') {
 		if (filterOption === option) {
-			return 'bg-primary text-primary-foreground';
+			return activeOptionStyle;
 		}
 
-		return 'bg-secondary text-secondary-foreground';
+		return inactiveOptionStyle;
+	}
+
+	let viewOption = $state<'grid' | 'table'>('grid');
+
+	function styleViewOption(option: 'grid' | 'table') {
+		if (viewOption === option) {
+			return activeOptionStyle;
+		}
+		return inactiveOptionStyle;
+	}
+
+	function updateViewOption(option: 'grid' | 'table') {
+		viewOption = option;
 	}
 
 	function orderedActiveApplications() {
@@ -53,14 +77,6 @@
 		filterOption = option;
 		activeApplicationsFilter.subscribe(orderedActiveApplications());
 	}
-
-	let resolveSubtitle = $derived.by(() => {
-		if (defaultCampaign) {
-			return `Applications for ${defaultCampaign.name}`;
-		}
-
-		return 'Applications for a campaign';
-	});
 </script>
 
 <PageTitle title="Applications" subtitle={resolveSubtitle}>
@@ -85,23 +101,42 @@
 	</div>
 </PageTitle>
 
-<h3 class="heading-3">Active applications</h3>
-
-<div class="my-4">
-	<span class="text-xs">Sort by:</span>
-	<button onclick={() => updateSortOption('ascending')}>
-		<Badge class={styleFilterOption('ascending')}>Ascending</Badge>
+<div class="my-4 flex items-center justify-end gap-2">
+	<span class="text-xs">View:</span>
+	<button onclick={() => updateViewOption('grid')}>
+		<Grid2x2 class={styleViewOption('grid')} />
 	</button>
-	<button onclick={() => updateSortOption('descending')}>
-		<Badge class={styleFilterOption('descending')}>Descending</Badge>
+	<button onclick={() => updateViewOption('table')}>
+		<Rows2 class={styleViewOption('table')} />
 	</button>
 </div>
 
-<ApplicationsGrid applications={activeApplicationsFilter.data} />
+<div class="my-4 flex items-center justify-between">
+	<h3 class="heading-3">Active applications</h3>
+	<div class="flex items-center gap-2">
+		<span class="text-xs">Sort by:</span>
+		<button onclick={() => updateSortOption('ascending')}>
+			<ArrowUpNarrowWide class={styleFilterOption('ascending')} />
+		</button>
+		<button onclick={() => updateSortOption('descending')}>
+			<ArrowDownNarrowWide class={styleFilterOption('descending')} />
+		</button>
+	</div>
+</div>
+
+{#if viewOption === 'grid'}
+	<ApplicationsGrid applications={activeApplicationsFilter.data} />
+{:else}
+	<ApplicationsTable applications={activeApplicationsFilter.data} />
+{/if}
 
 <h3 class="heading-3 mt-10 mb-5">Complete applications</h3>
 
-<ApplicationsGrid applications={completeApplications} />
+{#if viewOption === 'grid'}
+	<ApplicationsGrid applications={completeApplications} />
+{:else}
+	<ApplicationsTable applications={completeApplications} />
+{/if}
 
 <svelte:head>
 	<title>Applications | Delightable</title>

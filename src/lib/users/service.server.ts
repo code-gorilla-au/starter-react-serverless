@@ -1,4 +1,4 @@
-import { logger } from '$lib/logging';
+import { logger } from '$lib/logging.server';
 import { UserDBRepo, type UserRepository } from '$lib/users/repository.server';
 import { nanoid } from 'nanoid';
 import { type UserDto, userSchema } from '$lib/users/types';

@@ -1,5 +1,5 @@
 import type { StoreAction } from '$lib/server/database/interfaces';
-import { logger } from '$lib/logging';
+import { logger } from '$lib/logging.server';
 import {
 	applicationEntity,
 	type ApplicationEntity,

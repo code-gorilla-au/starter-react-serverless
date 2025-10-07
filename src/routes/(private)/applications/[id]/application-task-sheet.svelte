@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { applyAction, enhance } from '$app/forms';
 	import * as Sheet from '$components/ui/sheet';
 	import { Button } from '$components/ui/button';
 	import type { TaskDto } from '$lib/applications/types';
@@ -7,7 +7,9 @@
 	import { prettyDate, truncate } from '$lib/hooks/formats';
 	import { BaseInput } from '$components/base-input';
 	import { Pencil } from '@lucide/svelte';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
+	import { Separator } from '$components/ui/separator';
+	import { toast } from 'svelte-sonner';
 
 	type Props = {
 		open: boolean;
@@ -17,10 +19,12 @@
 
 	let { task, applicationId, open = $bindable() }: Props = $props();
 
+	const taskUrl = $derived(`/applications/${applicationId}/tasks/${task?.id}`);
+
 	async function routeToTaskEditPage(e: Event) {
 		e.preventDefault();
 
-		await goto(`/applications/${applicationId}/tasks/${task?.id}`);
+		await goto(taskUrl);
 	}
 </script>
 
@@ -62,20 +66,32 @@
 				{/if}
 			</Sheet.Header>
 			<Notes class="p-3" notes={task.notes} />
-			<form
-				method="POST"
-				action="?/addTaskNote"
-				class="flex items-center justify-between gap-2 p-3"
-				use:enhance
-			>
-				<BaseInput required name="note" placeholder="Add note" />
-				<input hidden name="taskId" value={task.id} />
-				<input type="hidden" name="applicationId" value={applicationId} />
+			<div class="p-3">
+				<Separator />
+				<form
+					method="POST"
+					action="?/addTaskNote"
+					class="flex items-center justify-between gap-2"
+					use:enhance={() => {
+						return async ({ result }) => {
+							if (result.type === 'success') {
+								toast.success('Note added', { position: 'top-center' });
+								await invalidateAll();
+							}
 
-				<Sheet.Close>
-					<Button size="sm" class="text-xs" type="submit">+ Add</Button>
-				</Sheet.Close>
-			</form>
+							return await applyAction(result);
+						};
+					}}
+				>
+					<BaseInput required name="note" placeholder="Add note" />
+					<input hidden name="taskId" value={task.id} />
+					<input type="hidden" name="applicationId" value={applicationId} />
+
+					<Sheet.Close>
+						<Button size="sm" class="text-xs" type="submit">+ Add</Button>
+					</Sheet.Close>
+				</form>
+			</div>
 		</Sheet.Content>
 	</Sheet.Root>
 {/if}

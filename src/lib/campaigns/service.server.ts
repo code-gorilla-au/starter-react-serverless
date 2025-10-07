@@ -1,4 +1,4 @@
-import { logger } from '$lib/logging';
+import { logger } from '$lib/logging.server';
 import { CampaignDBRepo, type CampaignRepository } from '$lib/campaigns/repository.server';
 import { type CampaignDto, campaignDtoListSchema, campaignDtoSchema } from '$lib/campaigns/types';
 import { nanoid } from 'nanoid';

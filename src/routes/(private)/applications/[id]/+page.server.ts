@@ -1,7 +1,7 @@
 import { type Actions, error, fail } from '@sveltejs/kit';
 import { z } from 'zod/v4';
 import { extractFormFromRequest } from '$lib/forms';
-import { logger } from '$lib/logging';
+import { logger } from '$lib/logging.server';
 
 export const load = async ({ params, locals }) => {
 	const applicationId = params.id;

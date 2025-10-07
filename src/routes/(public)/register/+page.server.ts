@@ -1,7 +1,7 @@
 import { type Actions, redirect } from '@sveltejs/kit';
 import { extractFormFromRequest } from '$lib/forms';
 import { z, ZodError } from 'zod/v4';
-import { logger } from '$lib/logging';
+import { logger } from '$lib/logging.server';
 
 const formSchema = z.object({
 	email: z.email(),

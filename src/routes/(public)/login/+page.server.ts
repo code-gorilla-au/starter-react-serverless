@@ -1,7 +1,7 @@
 import { type Actions, fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod/v4';
 import { extractFormFromRequest } from '$lib/forms';
-import { logger } from '$lib/logging';
+import { logger } from '$lib/logging.server';
 import { attachAuthCookie } from '$lib/server/auth';
 
 const formSchema = z.object({
