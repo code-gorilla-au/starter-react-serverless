@@ -8,8 +8,9 @@ import {
 	taskSchema
 } from '$lib/applications/types';
 import { nanoid } from 'nanoid';
-import type { ApplicationEntity, TaskEntity } from '$lib/server/database';
+import { applicationEntity, type ApplicationEntity, type TaskEntity } from '$lib/server/database';
 import { compareDesc } from 'date-fns';
+import type { Condition } from 'dynamodb-toolbox';
 
 export class ApplicationsService {
 	#log = logger.child({ module: 'ApplicationsService' });
@@ -99,10 +100,16 @@ export class ApplicationsService {
 		return applicationDtoSchema.parse(result);
 	}
 
+	/**
+	 * Adds a note to a specific application within a campaign.
+	 */
 	async addNoteToApplication(campaignId: string, applicationId: string, content: string) {
 		await this.#repo.addNoteToApplication(campaignId, applicationId, content);
 	}
 
+	/**
+	 * Updates an existing application note with the specified content.
+	 */
 	async updateApplicationNote(params: {
 		campaignId: string;
 		applicationId: string;
@@ -119,8 +126,30 @@ export class ApplicationsService {
 		});
 	}
 
-	async getApplications(campaignId: string): Promise<ApplicationDto[]> {
-		const models = await this.#repo.getApplicationsForCampaign(campaignId);
+	/**
+	 * Fetches and returns the list of active applications for a specified campaign.
+	 */
+	async getActiveApplications(campaignId: string): Promise<ApplicationDto[]> {
+		return this.getApplicationsWithFilter(campaignId, 'active');
+	}
+
+	/**
+	 * Retrieves a list of applications which have been completed for the specified campaign.
+	 */
+	async getCompleteApplications(campaignId: string): Promise<ApplicationDto[]> {
+		return this.getApplicationsWithFilter(campaignId, 'complete');
+	}
+
+	/**
+	 * Get applications by campaign ID.
+	 */
+	private async getApplicationsWithFilter(
+		campaignId: string,
+		status?: 'active' | 'complete'
+	): Promise<ApplicationDto[]> {
+		const filterCondition = resolveApplicationFilter(status);
+
+		const models = await this.#repo.getApplicationsForCampaign(campaignId, filterCondition);
 		if (models.error) {
 			this.#log.error({ error: models.error.message }, 'could not get applications');
 			throw models.error;
@@ -164,6 +193,9 @@ export class ApplicationsService {
 		return taskSchema.parse(taskModel.data);
 	}
 
+	/**
+	 * Adds a note to a specific task.
+	 */
 	async addTaskNote(params: { taskId: string; applicationId: string; content: string }) {
 		this.#log.debug(
 			{ taskId: params.taskId, applicationId: params.applicationId },
@@ -177,6 +209,9 @@ export class ApplicationsService {
 		});
 	}
 
+	/**
+	 * Updates the note associated with a specific task and application.
+	 */
 	async updateTaskNote(params: {
 		taskId: string;
 		applicationId: string;
@@ -193,6 +228,9 @@ export class ApplicationsService {
 		});
 	}
 
+	/**
+	 * Fetches a specific task associated with a given application ID and task ID.
+	 */
 	async getTask(params: { applicationId: string; taskId: string }) {
 		const model = await this.#repo.getTaskById(params.taskId, params.applicationId);
 		if (model.error) {
@@ -208,6 +246,9 @@ export class ApplicationsService {
 		return taskSchema.parse(model.data);
 	}
 
+	/**
+	 * Updates a task associated with a specific application.
+	 */
 	async updateTask(applicationId: string, task: Omit<TaskDto, 'createdAt' | 'notes'>) {
 		const model = await this.#repo.updateTask({
 			id: task.id,
@@ -229,4 +270,24 @@ export class ApplicationsService {
 export function applicationServiceFactory() {
 	const repo = new ApplicationDBRepo();
 	return new ApplicationsService(repo);
+}
+
+function resolveApplicationFilter(
+	status?: 'active' | 'complete'
+): Condition<typeof applicationEntity> | undefined {
+	if (!status) {
+		return undefined;
+	}
+
+	if (status === 'active') {
+		return {
+			attr: 'status',
+			in: ['applied', 'interview']
+		};
+	}
+
+	return {
+		attr: 'status',
+		in: ['rejected', 'no-response', 'offer']
+	};
 }

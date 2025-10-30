@@ -3,7 +3,6 @@
 	import * as Table from '$components/ui/table';
 	import { prettyDate } from '$lib/hooks/formats';
 	import { EmptySlate } from '$components/empty-slate';
-	import { Button } from '$components/ui/button';
 	import { ApplicationDropdownMenu } from '$components/applications/index.js';
 
 	type Props = {

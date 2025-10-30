@@ -44,6 +44,7 @@
 		if (viewOption === option) {
 			return activeOptionStyle;
 		}
+
 		return inactiveOptionStyle;
 	}
 
@@ -52,20 +53,14 @@
 	}
 
 	function orderedActiveApplications() {
-		return [...data.applications]
-			.sort((a, b) => {
-				if (filterOption === 'ascending') {
-					return compareAsc(a.startDate, b.startDate);
-				}
+		return [...data.applications].sort((a, b) => {
+			if (filterOption === 'ascending') {
+				return compareAsc(a.startDate, b.startDate);
+			}
 
-				return compareDesc(a.startDate, b.startDate);
-			})
-			.filter((a) => a.status !== 'no-response' && a.status !== 'rejected');
+			return compareDesc(a.startDate, b.startDate);
+		});
 	}
-
-	const completeApplications = $derived(
-		data.applications.filter((a) => a.status === 'no-response' || a.status === 'rejected')
-	);
 
 	const activeApplicationsFilter = new SimpleFilter(orderedActiveApplications());
 
@@ -77,6 +72,9 @@
 		filterOption = option;
 		activeApplicationsFilter.subscribe(orderedActiveApplications());
 	}
+
+	const completeApplications = $derived(data.completeApps);
+	const hasCompleteApplications = $derived(completeApplications.length > 0);
 </script>
 
 <PageTitle title="Applications" subtitle={resolveSubtitle}>
@@ -130,12 +128,14 @@
 	<ApplicationsTable applications={activeApplicationsFilter.data} />
 {/if}
 
-<h3 class="heading-3 mt-10 mb-5">Complete applications</h3>
+{#if hasCompleteApplications}
+	<h3 class="heading-3 mt-10 mb-5">Complete applications</h3>
 
-{#if viewOption === 'grid'}
-	<ApplicationsGrid applications={completeApplications} />
-{:else}
-	<ApplicationsTable applications={completeApplications} />
+	{#if viewOption === 'grid'}
+		<ApplicationsGrid applications={completeApplications} />
+	{:else}
+		<ApplicationsTable applications={completeApplications} />
+	{/if}
 {/if}
 
 <svelte:head>
