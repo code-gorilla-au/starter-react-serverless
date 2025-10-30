@@ -74,6 +74,7 @@
 	}
 
 	const completeApplications = $derived(data.completeApps);
+	const hasCompleteApplications = $derived(completeApplications.length > 0);
 </script>
 
 <PageTitle title="Applications" subtitle={resolveSubtitle}>
@@ -127,12 +128,14 @@
 	<ApplicationsTable applications={activeApplicationsFilter.data} />
 {/if}
 
-<h3 class="heading-3 mt-10 mb-5">Complete applications</h3>
+{#if hasCompleteApplications}
+	<h3 class="heading-3 mt-10 mb-5">Complete applications</h3>
 
-{#if viewOption === 'grid'}
-	<ApplicationsGrid applications={completeApplications} />
-{:else}
-	<ApplicationsTable applications={completeApplications} />
+	{#if viewOption === 'grid'}
+		<ApplicationsGrid applications={completeApplications} />
+	{:else}
+		<ApplicationsTable applications={completeApplications} />
+	{/if}
 {/if}
 
 <svelte:head>
