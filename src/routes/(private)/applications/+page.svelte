@@ -44,6 +44,7 @@
 		if (viewOption === option) {
 			return activeOptionStyle;
 		}
+
 		return inactiveOptionStyle;
 	}
 
@@ -52,18 +53,14 @@
 	}
 
 	function orderedActiveApplications() {
-		return [...data.applications]
-			.filter((a) => a.status !== 'no-response' && a.status !== 'rejected')
-			.sort((a, b) => {
-				if (filterOption === 'ascending') {
-					return compareAsc(a.startDate, b.startDate);
-				}
+		return [...data.applications].sort((a, b) => {
+			if (filterOption === 'ascending') {
+				return compareAsc(a.startDate, b.startDate);
+			}
 
-				return compareDesc(a.startDate, b.startDate);
-			});
+			return compareDesc(a.startDate, b.startDate);
+		});
 	}
-
-	const completeApplications = $derived(data.completeApps);
 
 	const activeApplicationsFilter = new SimpleFilter(orderedActiveApplications());
 
@@ -75,6 +72,8 @@
 		filterOption = option;
 		activeApplicationsFilter.subscribe(orderedActiveApplications());
 	}
+
+	const completeApplications = $derived(data.completeApps);
 </script>
 
 <PageTitle title="Applications" subtitle={resolveSubtitle}>
