@@ -53,19 +53,17 @@
 
 	function orderedActiveApplications() {
 		return [...data.applications]
+			.filter((a) => a.status !== 'no-response' && a.status !== 'rejected')
 			.sort((a, b) => {
 				if (filterOption === 'ascending') {
 					return compareAsc(a.startDate, b.startDate);
 				}
 
 				return compareDesc(a.startDate, b.startDate);
-			})
-			.filter((a) => a.status !== 'no-response' && a.status !== 'rejected');
+			});
 	}
 
-	const completeApplications = $derived(
-		data.applications.filter((a) => a.status === 'no-response' || a.status === 'rejected')
-	);
+	const completeApplications = $derived(data.completeApps);
 
 	const activeApplicationsFilter = new SimpleFilter(orderedActiveApplications());
 

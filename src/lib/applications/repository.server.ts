@@ -13,7 +13,8 @@ import {
 	PutItemCommand,
 	QueryCommand,
 	UpdateItemCommand,
-	DeleteItemCommand
+	DeleteItemCommand,
+	type Condition
 } from 'dynamodb-toolbox';
 import { ItemNotFoundError } from '$lib/server/database/errors';
 import { appTable } from '$lib/server/database';
@@ -38,7 +39,10 @@ export interface ApplicationRepository {
 		applicationId: string;
 		note: Omit<NotesEntity, 'createdAt' | 'updatedAt'>;
 	}): Promise<StoreAction>;
-	getApplicationsForCampaign(campaignId: string): Promise<StoreAction<ApplicationEntity[]>>;
+	getApplicationsForCampaign(
+		campaignId: string,
+		filter?: Condition<typeof applicationEntity>
+	): Promise<StoreAction<ApplicationEntity[]>>;
 	insertTask(task: Omit<TaskEntity, 'createdAt' | 'updatedAt'>): Promise<StoreAction<TaskEntity>>;
 	insertTaskNote(params: {
 		taskId: string;
@@ -221,14 +225,26 @@ export class ApplicationDBRepo implements ApplicationRepository {
 	}
 
 	async getApplicationsForCampaign(
-		campaignId: string
+		campaignId: string,
+		filter?: Condition<typeof applicationEntity>
 	): Promise<StoreAction<ApplicationEntity[]>> {
+		let filters: Record<string, Condition<typeof applicationEntity>> | undefined = undefined;
+
+		if (filter) {
+			filters = { APPLICATION: filter };
+
+			this.#log.debug({ filters }, 'applying additional filter');
+		}
+
 		const cmd = appTable
 			.build(QueryCommand)
 			.entities(applicationEntity)
 			.query({
 				index: 'GSI_INVERSE',
 				partition: `APPLICATION#${campaignId}`
+			})
+			.options({
+				filters
 			});
 
 		const output = await cmd.send();
