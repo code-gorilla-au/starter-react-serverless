@@ -147,21 +147,7 @@ export class ApplicationsService {
 		campaignId: string,
 		status?: 'active' | 'complete'
 	): Promise<ApplicationDto[]> {
-		let filterCondition: Condition<typeof applicationEntity> | undefined = undefined;
-
-		if (status) {
-			filterCondition = {
-				attr: 'status',
-				in: ['applied', 'interview']
-			};
-
-			if (status === 'complete') {
-				filterCondition = {
-					attr: 'status',
-					in: ['rejected', 'no-response', 'offer']
-				};
-			}
-		}
+		const filterCondition = resolveApplicationFilter(status);
 
 		const models = await this.#repo.getApplicationsForCampaign(campaignId, filterCondition);
 		if (models.error) {
@@ -284,4 +270,24 @@ export class ApplicationsService {
 export function applicationServiceFactory() {
 	const repo = new ApplicationDBRepo();
 	return new ApplicationsService(repo);
+}
+
+function resolveApplicationFilter(
+	status?: 'active' | 'complete'
+): Condition<typeof applicationEntity> | undefined {
+	if (!status) {
+		return undefined;
+	}
+
+	if (status === 'active') {
+		return {
+			attr: 'status',
+			in: ['applied', 'interview']
+		};
+	}
+
+	return {
+		attr: 'status',
+		in: ['rejected', 'no-response', 'offer']
+	};
 }

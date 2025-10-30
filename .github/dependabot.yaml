@@ -1,22 +1,21 @@
 ---
 version: 2
 updates:
+    - package-ecosystem: npm # See documentation for possible values
+      directory: '/frontend'
+      registries: '*' # Location of package manifests
+      schedule:
+          interval: monthly
+      groups:
+          prod:
+              patterns:
+                  - '*'
 
-  - package-ecosystem: npm # See documentation for possible values
-    directory: "/frontend"
-    registries: "*" # Location of package manifests
-    schedule:
-      interval: monthly
-    groups:
-      prod:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "monthly"
-    groups:
-      prod:
-        patterns:
-          - "*"
+    - package-ecosystem: 'github-actions'
+      directory: '/'
+      schedule:
+          interval: 'monthly'
+      groups:
+          prod:
+              patterns:
+                  - '*'
