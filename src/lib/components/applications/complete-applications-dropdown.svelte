@@ -4,9 +4,9 @@
 	import { EllipsisVertical } from '@lucide/svelte';
 
 	type Props = {
-		deleteAll: (e: Event) => void;
+		deleteOlderThanDays: (e: Event, numberDays?: number) => void;
 	};
-	let { deleteAll }: Props = $props();
+	let { deleteOlderThanDays }: Props = $props();
 </script>
 
 <DropdownMenu.Root>
@@ -16,10 +16,30 @@
 		{/snippet}
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="w-56" align="start">
-		<DropdownMenu.Label>Complete Applications</DropdownMenu.Label>
+		<DropdownMenu.Label>Delete Applications</DropdownMenu.Label>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Group>
-			<DropdownMenu.Item onclick={deleteAll}>Delete all</DropdownMenu.Item>
+			<DropdownMenu.Item
+				onclick={(e) => {
+					deleteOlderThanDays(e, 14);
+				}}
+			>
+				Last 14 days
+			</DropdownMenu.Item>
+			<DropdownMenu.Item
+				onclick={(e) => {
+					deleteOlderThanDays(e, 30);
+				}}
+			>
+				Last 30 days
+			</DropdownMenu.Item>
+			<DropdownMenu.Item
+				onclick={(e) => {
+					deleteOlderThanDays(e);
+				}}
+			>
+				All
+			</DropdownMenu.Item>
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

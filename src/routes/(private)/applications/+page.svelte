@@ -8,7 +8,7 @@
 	import { SimpleFilter } from '$lib/hooks/filters.svelte';
 	import { debouncedInput } from '$lib/forms';
 	import { Searchbar } from '$components/searchbar/index.js';
-	import { filterApplication } from './filters.js';
+	import { filterApplication, filterOldApplications } from './filters.js';
 	import { compareAsc, compareDesc } from 'date-fns';
 	import { ApplicationsTable } from '$components/applications/index.js';
 	import { ArrowDownNarrowWide, ArrowUpNarrowWide, Rows2, Grid2x2 } from '@lucide/svelte';
@@ -78,12 +78,16 @@
 	const completeApplications = $derived(await getCompleteApplications());
 	const hasCompleteApplications = $derived(completeApplications.length > 0);
 
-	async function deleteCompleteApplications(e: Event) {
-		e.preventDefault();
+	async function deleteCompleteApplications(e: Event, numberDays?: number) {
+		let dataToDelete = completeApplications;
+
+		if (numberDays) {
+			dataToDelete = filterOldApplications(completeApplications, numberDays);
+		}
 
 		await deleteApplications({
 			campaignId: defaultCampaign?.id ?? '',
-			applications: completeApplications
+			applicationIds: dataToDelete.map((application) => application.id)
 		});
 
 		await getCompleteApplications().refresh();
@@ -145,7 +149,7 @@
 	<div class="mt-10 mb-5 flex items-center justify-between">
 		<h3 class="heading-3">Complete applications</h3>
 		<div>
-			<CompleteApplicationsDropdown deleteAll={deleteCompleteApplications} />
+			<CompleteApplicationsDropdown deleteOlderThanDays={deleteCompleteApplications} />
 		</div>
 	</div>
 

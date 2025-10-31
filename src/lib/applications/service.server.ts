@@ -171,14 +171,11 @@ export class ApplicationsService {
 	/**
 	 * Deletes multiple applications associated with a specific campaign.
 	 */
-	async bulkDeleteApplications(
-		campaignId: string,
-		applications: ApplicationDto[]
-	): Promise<void> {
+	async bulkDeleteApplications(campaignId: string, applications: string[]): Promise<void> {
 		for (const application of applications) {
 			await this.#repo.deleteApplication({
 				campaignId,
-				applicationId: application.id
+				applicationId: application
 			});
 		}
 	}
