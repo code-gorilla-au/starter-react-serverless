@@ -75,17 +75,18 @@
 		activeApplicationsFilter.subscribe(orderedActiveApplications());
 	}
 
-	const completeApplications = $derived(await getCompleteApplications(defaultCampaign?.id ?? ''));
+	const completeApplications = $derived(await getCompleteApplications());
 	const hasCompleteApplications = $derived(completeApplications.length > 0);
 
 	async function deleteCompleteApplications(e: Event) {
 		e.preventDefault();
+
 		await deleteApplications({
 			campaignId: defaultCampaign?.id ?? '',
 			applications: completeApplications
 		});
 
-		await getCompleteApplications(defaultCampaign?.id ?? '').refresh();
+		await getCompleteApplications().refresh();
 	}
 </script>
 
