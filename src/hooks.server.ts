@@ -21,6 +21,10 @@ const attachLocalServices: Handle = ({ event, resolve }) => {
 };
 
 export const resolveRoutePaths: Handle = async ({ event, resolve }) => {
+	if (event.url.pathname === '/' || event.url.pathname === '') {
+		return resolve(event);
+	}
+
 	if (event.route.id?.includes('(public)')) {
 		return resolve(event);
 	}
