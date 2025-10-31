@@ -12,6 +12,8 @@
 	import { compareAsc, compareDesc } from 'date-fns';
 	import { ApplicationsTable } from '$components/applications/index.js';
 	import { ArrowDownNarrowWide, ArrowUpNarrowWide, Rows2, Grid2x2 } from '@lucide/svelte';
+	import { CompleteApplicationsDropdown } from '$components/applications';
+	import { deleteApplications, getCompleteApplications } from '$lib/applications/queries.remote';
 
 	let { data }: PageProps = $props();
 	let defaultCampaign = $derived(data.defaultCampaign);
@@ -73,8 +75,18 @@
 		activeApplicationsFilter.subscribe(orderedActiveApplications());
 	}
 
-	const completeApplications = $derived(data.completeApps);
+	const completeApplications = $derived(await getCompleteApplications(defaultCampaign?.id ?? ''));
 	const hasCompleteApplications = $derived(completeApplications.length > 0);
+
+	async function deleteCompleteApplications(e: Event) {
+		e.preventDefault();
+		await deleteApplications({
+			campaignId: defaultCampaign?.id ?? '',
+			applications: completeApplications
+		});
+
+		await getCompleteApplications(defaultCampaign?.id ?? '').refresh();
+	}
 </script>
 
 <PageTitle title="Applications" subtitle={resolveSubtitle}>
@@ -129,7 +141,12 @@
 {/if}
 
 {#if hasCompleteApplications}
-	<h3 class="heading-3 mt-10 mb-5">Complete applications</h3>
+	<div class="mt-10 mb-5 flex items-center justify-between">
+		<h3 class="heading-3">Complete applications</h3>
+		<div>
+			<CompleteApplicationsDropdown deleteAll={deleteCompleteApplications} />
+		</div>
+	</div>
 
 	{#if viewOption === 'grid'}
 		<ApplicationsGrid applications={completeApplications} />

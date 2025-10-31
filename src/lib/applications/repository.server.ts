@@ -14,11 +14,14 @@ import {
 	QueryCommand,
 	UpdateItemCommand,
 	DeleteItemCommand,
-	type Condition
+	type Condition,
+	BatchWriteCommand
 } from 'dynamodb-toolbox';
+import { BatchDeleteRequest } from 'dynamodb-toolbox/entity/actions/batchDelete';
 import { ItemNotFoundError } from '$lib/server/database/errors';
 import { appTable } from '$lib/server/database';
 import { nanoid } from 'nanoid';
+import { execute } from 'dynamodb-toolbox/table/actions/batchWrite';
 
 export interface ApplicationRepository {
 	insertApplication(
@@ -53,6 +56,7 @@ export interface ApplicationRepository {
 	updateTask(
 		updatedTask: Omit<TaskEntity, 'createdAt' | 'updatedAt' | 'notes'>
 	): Promise<StoreAction<TaskEntity>>;
+	bulkDeleteTask(applicationId: string, tasks: TaskEntity[]): Promise<StoreAction>;
 	updateTaskNote(params: {
 		taskId: string;
 		applicationId: string;
@@ -161,6 +165,9 @@ export class ApplicationDBRepo implements ApplicationRepository {
 		await cmd.send();
 	}
 
+	/**
+	 * Updates a specific note within an application's notes.
+	 */
 	async updateApplicationNote(params: {
 		campaignId: string;
 		applicationId: string;
@@ -224,6 +231,9 @@ export class ApplicationDBRepo implements ApplicationRepository {
 		};
 	}
 
+	/**
+	 * Retrieves the list of applications associated with a specific campaign, optionally applying additional filters.
+	 */
 	async getApplicationsForCampaign(
 		campaignId: string,
 		filter?: Condition<typeof applicationEntity>
@@ -254,6 +264,9 @@ export class ApplicationDBRepo implements ApplicationRepository {
 		};
 	}
 
+	/**
+	 * Deletes an application and its associated tasks from the system.
+	 */
 	async deleteApplication(params: {
 		campaignId: string;
 		applicationId: string;
@@ -276,14 +289,7 @@ export class ApplicationDBRepo implements ApplicationRepository {
 			};
 		}
 
-		for (const task of models.data) {
-			const taskCmd = taskEntity.build(DeleteItemCommand).key({
-				applicationId: params.applicationId,
-				id: task.id
-			});
-
-			await taskCmd.send();
-		}
+		await this.bulkDeleteTask(params.applicationId, models.data);
 
 		const cmd = applicationEntity
 			.build(DeleteItemCommand)
@@ -296,6 +302,36 @@ export class ApplicationDBRepo implements ApplicationRepository {
 		};
 	}
 
+	/**
+	 * Deletes a given array of tasks in bulk for the specified application.
+	 *
+	 * Processes the deletion of tasks in chunks for optimised performance and
+	 * ensures that each chunk does not exceed the maximum limit for batch write requests.
+	 */
+	async bulkDeleteTask(applicationId: string, tasks: TaskEntity[]): Promise<StoreAction> {
+		const taskChunks = chunk(tasks, 25);
+
+		for (const tasks of taskChunks) {
+			const deleteCmd = appTable.build(BatchWriteCommand).requests(
+				...tasks.map((task) => {
+					return taskEntity.build(BatchDeleteRequest).key({
+						applicationId,
+						id: task.id
+					});
+				})
+			);
+
+			await execute(deleteCmd);
+		}
+
+		return {
+			data: undefined
+		};
+	}
+
+	/**
+	 * Inserts a new task into the storage system and retrieves the inserted task.
+	 */
 	async insertTask(
 		task: Omit<TaskEntity, 'createdAt' | 'updatedAt'>
 	): Promise<StoreAction<TaskEntity>> {
@@ -306,6 +342,9 @@ export class ApplicationDBRepo implements ApplicationRepository {
 		return await this.getTaskById(task.id, task.applicationId);
 	}
 
+	/**
+	 * Inserts a new note for a specified task and updates the task entity.
+	 */
 	async insertTaskNote(params: {
 		taskId: string;
 		applicationId: string;
@@ -333,6 +372,9 @@ export class ApplicationDBRepo implements ApplicationRepository {
 		};
 	}
 
+	/**
+	 * Updates a note for a specified task.
+	 */
 	async updateTaskNote(params: {
 		taskId: string;
 		applicationId: string;
@@ -381,6 +423,9 @@ export class ApplicationDBRepo implements ApplicationRepository {
 		};
 	}
 
+	/**
+	 * Retrieves a task entity by its identifier and application ID.
+	 */
 	async getTaskById(taskId: string, applicationId: string): Promise<StoreAction<TaskEntity>> {
 		this.#log.debug({ taskId, applicationId }, 'getting task by id');
 
@@ -402,6 +447,9 @@ export class ApplicationDBRepo implements ApplicationRepository {
 		};
 	}
 
+	/**
+	 * Updates the details of an existing task in the data store.
+	 */
 	async updateTask(
 		updatedTask: Omit<TaskEntity, 'createdAt' | 'updatedAt' | 'notes'>
 	): Promise<StoreAction<TaskEntity>> {
@@ -419,6 +467,9 @@ export class ApplicationDBRepo implements ApplicationRepository {
 		};
 	}
 
+	/**
+	 * Retrieves a list of tasks associated with a specific application.
+	 */
 	async getTasksForApplication(applicationId: string): Promise<StoreAction<TaskEntity[]>> {
 		const cmd = appTable
 			.build(QueryCommand)
@@ -434,4 +485,17 @@ export class ApplicationDBRepo implements ApplicationRepository {
 			data: output.Items ?? []
 		};
 	}
+}
+
+/**
+ * Splits an array into smaller arrays ("chunks") of a specified size.
+ */
+function chunk<T>(arr: T[], size: number): T[][] {
+	const chunks: T[][] = [];
+
+	for (let i = 0; i < arr.length; i += size) {
+		chunks.push(arr.slice(i, i + size));
+	}
+
+	return chunks;
 }
