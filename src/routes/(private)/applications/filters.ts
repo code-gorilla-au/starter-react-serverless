@@ -1,4 +1,6 @@
 import type { ApplicationDto } from '$lib/applications/types';
+import { SvelteDate } from 'svelte/reactivity';
+import { isBefore, sub } from 'date-fns';
 
 /**
  * Filters applications based on a search term provided in the input.
@@ -28,4 +30,17 @@ export function filterApplication(input: string) {
 
 		return false;
 	};
+}
+
+/**
+ * Filters a list of applications to include only those older than a specified number of days.
+ */
+export function filterOldApplications(
+	apps: ApplicationDto[],
+	numberDays: number
+): ApplicationDto[] {
+	const now = new SvelteDate();
+	const cutoffDate = sub(now, { days: numberDays });
+
+	return apps.filter((app) => isBefore(app.startDate, cutoffDate));
 }
