@@ -1,7 +1,11 @@
 <script>
-</script>
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 
-<h1>Home</h1>
+	onMount(() => {
+		goto('/campaigns');
+	});
+</script>
 
 <svelte:head>
 	<title>Delightable</title>
