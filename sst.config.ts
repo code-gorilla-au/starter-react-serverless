@@ -12,7 +12,7 @@ export default $config({
 	},
 	async run() {
 		const domain = 'delightable.code-gorilla.com.au';
-		const bucket = new sst.aws.Bucket('Assets');
+
 		const appTable = new sst.aws.Dynamo('AppTable', {
 			fields: {
 				pk: 'string',
@@ -41,7 +41,7 @@ export default $config({
 				architecture: 'x86_64',
 				install: ['bcrypt']
 			},
-			link: [bucket, appTable]
+			link: [appTable]
 		});
 	}
 });
