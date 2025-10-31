@@ -1,4 +1,4 @@
-import type { UserSession } from '$lib/server/auth';
+import type { UserSession } from '$lib/auth';
 
 export const load = async ({ locals }) => {
 	const session = locals.session as UserSession;

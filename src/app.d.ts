@@ -2,7 +2,7 @@
 // for information about these interfaces
 import type { ApplicationsService } from '$lib/applications/service.server';
 import type { UsersService } from '$lib/users/service.server';
-import { AuthService, type UserSession } from '$lib/server/auth';
+import { AuthService, type UserSession } from '$lib/auth';
 import type { CampaignService } from '$lib/campaigns/service.server';
 import type { CampaignDto } from '$lib/campaigns/types';
 

@@ -1,6 +1,6 @@
 import { env } from '$env/dynamic/private';
 import * as jose from 'jose';
-import { AUTH_COOKIE_NAME, type UserSession } from '$lib/server/auth/types';
+import { AUTH_COOKIE_NAME, type UserSession } from '$lib/auth/types.server';
 import type { Cookies } from '@sveltejs/kit';
 import { loadServerEnv } from '$lib/server/env';
 

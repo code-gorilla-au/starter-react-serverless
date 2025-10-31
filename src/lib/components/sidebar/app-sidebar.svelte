@@ -10,7 +10,7 @@
 	import File from '@lucide/svelte/icons/file';
 	import type { CampaignDto } from '$lib/campaigns/types';
 	import { page } from '$app/state';
-	import type { UserSession } from '$lib/server/auth';
+	import type { UserSession } from '$lib/auth';
 
 	type Props = ComponentProps<typeof Sidebar.Root> & {
 		defaultCampaign?: CampaignDto;
