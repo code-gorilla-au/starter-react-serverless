@@ -1,12 +1,11 @@
-import { type Actions, error, fail, redirect } from '@sveltejs/kit';
+import { type Actions, fail, redirect } from '@sveltejs/kit';
 import { prettifyError, z, ZodError } from 'zod/v4';
 import { taskStatusDtoSchema } from '$lib/applications/types';
 import { extractFormFromRequest } from '$lib/forms';
+import { authenticateUser } from '$lib/auth/queries.remote';
 
 export const load = async ({ locals, params }) => {
-	if (!locals.session) {
-		error(401, 'unauthorized');
-	}
+	await authenticateUser();
 
 	const task = await locals.appsSvc.getTask({
 		applicationId: params.id,
@@ -33,10 +32,7 @@ const updateTaskNoteSchema = z.object({
 
 export const actions = {
 	updateTask: async ({ locals, request, params }) => {
-		if (!locals.session) {
-			fail(401, 'unauthorized');
-			return;
-		}
+		await authenticateUser();
 
 		if (!params?.taskId) {
 			fail(400, 'task id is required');
@@ -55,10 +51,7 @@ export const actions = {
 		redirect(301, `/applications/${params.id}`);
 	},
 	updateTaskNote: async ({ locals, request, params }) => {
-		if (!locals.session) {
-			fail(401, 'unauthorized');
-			return;
-		}
+		await authenticateUser();
 
 		if (!params?.taskId) {
 			fail(400, 'task id is required');

@@ -1,17 +1,15 @@
-import { type Actions, error, fail, redirect } from '@sveltejs/kit';
+import { type Actions, fail, redirect } from '@sveltejs/kit';
 import { extractFormFromRequest } from '$lib/forms';
 import { prettifyError, ZodError, z } from 'zod/v4';
 import { logger } from '$lib/logging.server';
 import { applicationDtoStatus } from '$lib/applications/types';
+import { getDefaultCampaign } from '$lib/campaigns/queries.remote';
+import { authenticateUser } from '$lib/auth/queries.remote';
 
 export const load = async ({ locals, params }) => {
-	if (!locals.defaultCampaign) {
-		error(404, { message: 'No default campaign found' });
-	}
+	const defaultCampaign = await getDefaultCampaign();
 
-	const campaignId = locals.defaultCampaign.id;
-
-	const application = await locals.appsSvc.getApplication(campaignId, params.id);
+	const application = await locals.appsSvc.getApplication(defaultCampaign.id, params.id);
 
 	return {
 		application
@@ -47,13 +45,8 @@ export const actions = {
 	 * application page upon successful completion.
 	 */
 	updateApplication: async ({ locals, request, params }) => {
-		if (!locals.session) {
-			return fail(401, { message: 'Unauthorized' });
-		}
-
-		if (!locals.defaultCampaign) {
-			return fail(404, { message: 'No default campaign found' });
-		}
+		await authenticateUser();
+		const defaultCampaign = await getDefaultCampaign();
 
 		if (!params.id) {
 			return fail(400, { message: 'Application id is required' });
@@ -62,7 +55,7 @@ export const actions = {
 		try {
 			const formData = await extractFormFromRequest(request, updateApplicationFormSchema);
 
-			await locals.appsSvc.updateApplication(locals.defaultCampaign.id, {
+			await locals.appsSvc.updateApplication(defaultCampaign.id, {
 				...formData,
 				notes: []
 			});
@@ -84,13 +77,8 @@ export const actions = {
 		redirect(301, `/applications/${params.id}`);
 	},
 	updateApplicationNote: async ({ locals, request, params }) => {
-		if (!locals.session) {
-			return fail(401, { message: 'Unauthorized' });
-		}
-
-		if (!locals.defaultCampaign) {
-			return fail(404, { message: 'No default campaign found' });
-		}
+		await authenticateUser();
+		const defaultCampaign = await getDefaultCampaign();
 
 		if (!params.id) {
 			return fail(400, { message: 'Application id is required' });
@@ -99,7 +87,7 @@ export const actions = {
 		try {
 			const formData = await extractFormFromRequest(request, updateApplicationNoteSchema);
 			await locals.appsSvc.updateApplicationNote({
-				campaignId: locals.defaultCampaign.id,
+				campaignId: defaultCampaign.id,
 				applicationId: params.id,
 				noteId: formData.noteId,
 				content: formData.content

@@ -32,7 +32,7 @@ export const authenticateUser = query(async () => {
 	}
 
 	try {
-		event.locals.session = await event.locals.authSvc.verify(authToken);
+		return await event.locals.authSvc.verify(authToken);
 	} catch (error) {
 		const err = error as Error;
 		logger.error({ error: err.message }, 'could not verify token');

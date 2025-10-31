@@ -2,6 +2,7 @@ import { type Actions, redirect } from '@sveltejs/kit';
 import { z } from 'zod/v4';
 import { extractFormFromRequest } from '$lib/forms';
 import { logger } from '$lib/logging.server';
+import { authenticateUser } from '$lib/auth/queries.remote';
 
 const formSchema = z.object({
 	campaignId: z.string(),
@@ -14,6 +15,7 @@ const formSchema = z.object({
 
 export const actions = {
 	default: async ({ locals, request }) => {
+		await authenticateUser();
 		try {
 			const formData = await extractFormFromRequest(request, formSchema);
 			await locals.appsSvc.createApplication(formData.campaignId, {

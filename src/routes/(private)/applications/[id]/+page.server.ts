@@ -1,16 +1,16 @@
-import { type Actions, error, fail } from '@sveltejs/kit';
+import { type Actions, fail } from '@sveltejs/kit';
 import { z } from 'zod/v4';
 import { extractFormFromRequest } from '$lib/forms';
 import { logger } from '$lib/logging.server';
+import { getDefaultCampaign } from '$lib/campaigns/queries.remote';
+import { authenticateUser } from '$lib/auth/queries.remote';
 
 export const load = async ({ params, locals }) => {
 	const applicationId = params.id;
 
-	if (!locals?.defaultCampaign) {
-		error(404, 'Default Campaign is required to load applications');
-	}
+	const defaultCampaign = await getDefaultCampaign();
 
-	const campaignId = locals?.defaultCampaign?.id;
+	const campaignId = defaultCampaign.id;
 
 	const application = await locals.appsSvc.getApplication(campaignId, applicationId);
 
@@ -43,18 +43,12 @@ export const actions = {
 	 */
 	addApplicationNote: async ({ locals, request }) => {
 		try {
-			if (!locals.session) {
-				return fail(401, { error: 'Unauthorized' });
-			}
-
-			if (!locals.defaultCampaign) {
-				return fail(404, { error: 'Default Campaign not found' });
-			}
+			const defaultCampaign = await getDefaultCampaign();
 
 			const formData = await extractFormFromRequest(request, addApplicationNoteSchema);
 
 			await locals.appsSvc.addNoteToApplication(
-				locals.defaultCampaign.id as string,
+				defaultCampaign.id,
 				formData.applicationId,
 				formData.note
 			);
@@ -77,13 +71,8 @@ export const actions = {
 	},
 	addApplicationTask: async ({ locals, request }) => {
 		try {
-			if (!locals.session) {
-				return fail(401, { error: 'Unauthorized' });
-			}
-
-			if (!locals.defaultCampaign) {
-				return fail(404, { error: 'Default Campaign not found' });
-			}
+			await authenticateUser();
+			await getDefaultCampaign();
 
 			const formData = await extractFormFromRequest(request, addApplicationTaskSchema);
 			await locals.appsSvc.addTaskToApplication(formData.applicationId, {
@@ -107,9 +96,7 @@ export const actions = {
 		}
 	},
 	addTaskNote: async ({ locals, request }) => {
-		if (!locals.session) {
-			return fail(401, { error: 'Unauthorized' });
-		}
+		await authenticateUser();
 
 		const formData = await extractFormFromRequest(request, addTaskNoteSchema);
 

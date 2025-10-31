@@ -1,16 +1,12 @@
-import type { ApplicationDto } from '$lib/applications/types';
 import { authenticateUser } from '$lib/auth/queries.remote';
+import { getDefaultCampaign } from '$lib/campaigns/queries.remote';
 
 export const load = async ({ locals }) => {
 	await authenticateUser();
 
-	if (!locals.defaultCampaign) {
-		return {
-			applications: [] as ApplicationDto[]
-		};
-	}
+	const defaultCampaign = await getDefaultCampaign();
 
-	const activeApps = await locals.appsSvc.getActiveApplications(locals.defaultCampaign.id);
+	const activeApps = await locals.appsSvc.getActiveApplications(defaultCampaign.id);
 
 	return {
 		applications: activeApps
