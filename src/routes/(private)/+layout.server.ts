@@ -1,11 +1,11 @@
-import type { UserSession } from '$lib/auth';
+import { authenticateUser } from '$lib/auth/queries.remote';
+import { getDefaultCampaign } from '$lib/campaigns/queries.remote';
 
 export const load = async ({ locals }) => {
-	const session = locals.session as UserSession;
+	const session = await authenticateUser();
+	const defaultCampaign = await getDefaultCampaign();
 
 	const campaigns = await locals.campaignSvc.getCampaignsForUser(session.userId);
-	const defaultCampaign = await locals.campaignSvc.getDefaultCampaign(session.userId);
-	locals.defaultCampaign = defaultCampaign;
 
 	return {
 		defaultCampaign: defaultCampaign,

@@ -1,8 +1,8 @@
 import { z } from 'zod/v4';
 import { type Actions, redirect } from '@sveltejs/kit';
-import type { UserSession } from '$lib/auth';
 import { logger } from '$lib/logging.server';
 import { extractFormFromRequest } from '$lib/forms';
+import { authenticateUser } from '$lib/auth/queries.remote';
 
 const formSchema = z.object({
 	name: z.string(),
@@ -12,7 +12,7 @@ const formSchema = z.object({
 
 export const actions = {
 	default: async ({ locals, request }) => {
-		const session = locals.session as UserSession;
+		const session = await authenticateUser();
 		const user = await locals.userSvc.getActiveUser(session.email);
 
 		try {

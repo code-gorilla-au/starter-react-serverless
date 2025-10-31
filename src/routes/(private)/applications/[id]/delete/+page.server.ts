@@ -1,19 +1,16 @@
 import { type Actions, error, redirect } from '@sveltejs/kit';
+import { authenticateUser } from '$lib/auth/queries.remote';
+import { getDefaultCampaign } from '$lib/campaigns/queries.remote';
 
 export const load = async ({ locals, params }) => {
-	if (!locals.session) {
-		error(401, { message: 'unauthorized' });
-	}
+	await authenticateUser();
+	const defaultCampaign = await getDefaultCampaign();
 
 	if (!params.id) {
 		error(404, 'Application Not found');
 	}
 
-	if (!locals.defaultCampaign) {
-		error(404, 'Default Campaign not found');
-	}
-
-	const application = await locals.appsSvc.getApplication(locals.defaultCampaign.id, params.id);
+	const application = await locals.appsSvc.getApplication(defaultCampaign.id, params.id);
 
 	return {
 		application
@@ -22,19 +19,14 @@ export const load = async ({ locals, params }) => {
 
 export const actions = {
 	deleteApplication: async ({ params, locals }) => {
-		if (!locals.session) {
-			error(404, 'Unauthorized');
-		}
+		await authenticateUser();
+		const defaultCampaign = await getDefaultCampaign();
 
 		if (!params.id) {
 			error(404, 'Application Not found');
 		}
 
-		if (!locals.defaultCampaign) {
-			error(404, 'Default Campaign not found');
-		}
-
-		await locals.appsSvc.deleteApplication(locals.defaultCampaign?.id, params.id);
+		await locals.appsSvc.deleteApplication(defaultCampaign?.id, params.id);
 
 		redirect(303, '/applications');
 	}
