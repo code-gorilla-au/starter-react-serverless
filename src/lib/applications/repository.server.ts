@@ -56,6 +56,7 @@ export interface ApplicationRepository {
 	updateTask(
 		updatedTask: Omit<TaskEntity, 'createdAt' | 'updatedAt' | 'notes'>
 	): Promise<StoreAction<TaskEntity>>;
+	bulkDeleteTask(applicationId: string, tasks: TaskEntity[]): Promise<StoreAction>;
 	updateTaskNote(params: {
 		taskId: string;
 		applicationId: string;
