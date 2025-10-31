@@ -169,6 +169,21 @@ export class ApplicationsService {
 	}
 
 	/**
+	 * Deletes multiple applications associated with a specific campaign.
+	 */
+	async bulkDeleteApplications(
+		campaignId: string,
+		applications: ApplicationDto[]
+	): Promise<void> {
+		for (const application of applications) {
+			await this.#repo.deleteApplication({
+				campaignId,
+				applicationId: application.id
+			});
+		}
+	}
+
+	/**
 	 * Adds a new task to the specified application.
 	 */
 	async addTaskToApplication(
