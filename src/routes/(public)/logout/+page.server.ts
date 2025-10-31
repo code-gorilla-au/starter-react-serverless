@@ -1,4 +1,4 @@
-import { expireAuthCookie } from '$lib/server/auth';
+import { expireAuthCookie } from '$lib/auth';
 
 export const load = async ({ cookies }) => {
 	expireAuthCookie(cookies);

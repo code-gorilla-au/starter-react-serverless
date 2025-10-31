@@ -242,8 +242,6 @@ export class ApplicationDBRepo implements ApplicationRepository {
 
 		if (filter) {
 			filters = { APPLICATION: filter };
-
-			this.#log.debug({ filters }, 'applying additional filter');
 		}
 
 		const cmd = appTable
