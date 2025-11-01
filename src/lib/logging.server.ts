@@ -1,5 +1,5 @@
 import pino from 'pino';
-import { loadServerEnv } from '$lib/server/env';
+import { loadServerEnv } from '$lib/env.server';
 
 const config = loadServerEnv();
 
