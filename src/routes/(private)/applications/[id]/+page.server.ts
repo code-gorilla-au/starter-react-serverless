@@ -5,20 +5,6 @@ import { logger } from '$lib/logging.server';
 import { getDefaultCampaign } from '$lib/campaigns/queries.remote';
 import { authenticateUser } from '$lib/auth/queries.remote';
 
-export const load = async ({ params, locals }) => {
-	const applicationId = params.id;
-
-	const defaultCampaign = await getDefaultCampaign();
-
-	const campaignId = defaultCampaign.id;
-
-	const application = await locals.appsSvc.getApplication(campaignId, applicationId);
-
-	return {
-		application
-	};
-};
-
 const addApplicationNoteSchema = z.object({
 	note: z.string(),
 	campaignId: z.string(),
@@ -47,7 +33,7 @@ export const actions = {
 
 			const formData = await extractFormFromRequest(request, addApplicationNoteSchema);
 
-			await locals.appsSvc.addNoteToApplication(
+			await locals.appsSvc.addApplicationNote(
 				defaultCampaign.id,
 				formData.applicationId,
 				formData.note

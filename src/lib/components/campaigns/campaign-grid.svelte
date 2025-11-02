@@ -27,7 +27,7 @@
 {:else}
 	<Grid>
 		{#each campaigns as campaign (campaign.id)}
-			<Card class="w-full cursor-pointer hover:bg-muted/30">
+			<Card class="w-full">
 				<CardHeader class="flex items-center justify-between">
 					<CardTitle>{campaign.name}</CardTitle>
 					<CampaignDropdown />

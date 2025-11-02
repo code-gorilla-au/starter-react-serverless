@@ -15,6 +15,7 @@
 
 	let task = $derived(data.task);
 	let applicationId = $derived(params.id);
+	let taskId = $derived(params.taskId);
 
 	async function routeBackToApplication() {
 		await goto(`/applications/${applicationId}`);
@@ -74,7 +75,17 @@
 			<span class="text-sm">Due date</span>
 			<DatePicker bind:value={formData.dueDate} />
 		</div>
-		<div class="my-5 flex items-center justify-end">
+		<div class="my-5 flex items-center justify-end gap-2">
+			<Button
+				type="button"
+				variant="destructive"
+				onclick={async (e: Event) => {
+					e.preventDefault();
+					await goto(`/applications/${applicationId}/tasks/${taskId}/delete`);
+				}}
+			>
+				Delete
+			</Button>
 			<Button type="submit">Update</Button>
 		</div>
 	</form>
