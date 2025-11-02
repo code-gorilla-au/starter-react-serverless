@@ -36,7 +36,7 @@ export interface ApplicationRepository {
 	): Promise<StoreAction<ApplicationEntity>>;
 	deleteApplication(params: { campaignId: string; applicationId: string }): Promise<StoreAction>;
 	getTasksForApplication(applicationId: string): Promise<StoreAction<TaskEntity[]>>;
-	addNoteToApplication(campaignId: string, applicationId: string, content: string): Promise<void>;
+	addApplicationNote(campaignId: string, applicationId: string, content: string): Promise<void>;
 	updateApplicationNote(params: {
 		campaignId: string;
 		applicationId: string;
@@ -143,7 +143,7 @@ export class ApplicationDBRepo implements ApplicationRepository {
 	/**
 	 * Adds a note to a specific application within a campaign.
 	 */
-	async addNoteToApplication(campaignId: string, applicationId: string, content: string) {
+	async addApplicationNote(campaignId: string, applicationId: string, content: string) {
 		this.#log.debug({ campaignId, applicationId }, 'adding note to application');
 
 		const note: NotesEntity = {

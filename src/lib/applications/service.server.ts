@@ -104,7 +104,7 @@ export class ApplicationsService {
 	 * Adds a note to a specific application within a campaign.
 	 */
 	async addApplicationNote(campaignId: string, applicationId: string, content: string) {
-		await this.#repo.addNoteToApplication(campaignId, applicationId, content);
+		await this.#repo.addApplicationNote(campaignId, applicationId, content);
 	}
 
 	/**
