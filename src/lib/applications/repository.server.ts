@@ -42,6 +42,11 @@ export interface ApplicationRepository {
 		applicationId: string;
 		note: Omit<NotesEntity, 'createdAt' | 'updatedAt'>;
 	}): Promise<StoreAction>;
+	deleteApplicationNote(params: {
+		campaignId: string;
+		applicationId: string;
+		noteId: string;
+	}): Promise<StoreAction>;
 	getApplicationsForCampaign(
 		campaignId: string,
 		filter?: Condition<typeof applicationEntity>
@@ -217,6 +222,46 @@ export class ApplicationDBRepo implements ApplicationRepository {
 
 			return n;
 		});
+
+		const cmd = applicationEntity.build(UpdateItemCommand).item({
+			id: params.applicationId,
+			campaignId: params.campaignId,
+			notes: updatedNotes
+		});
+
+		await cmd.send();
+
+		return {
+			data: undefined
+		};
+	}
+
+	/**
+	 * Deletes a specific note from an application's notes.
+	 */
+	async deleteApplicationNote(params: {
+		campaignId: string;
+		applicationId: string;
+		noteId: string;
+	}): Promise<StoreAction> {
+		this.#log.debug(
+			{
+				campaignId: params.campaignId,
+				applicationId: params.applicationId,
+				noteId: params.noteId
+			},
+			'deleting application note'
+		);
+
+		const model = await this.getApplicationById(params.applicationId, params.campaignId);
+		if (model.error || !model.data) {
+			return {
+				error: model.error
+			};
+		}
+
+		const notes = model.data?.notes ?? [];
+		const updatedNotes = [...notes].filter((n) => n.id !== params.noteId);
 
 		const cmd = applicationEntity.build(UpdateItemCommand).item({
 			id: params.applicationId,

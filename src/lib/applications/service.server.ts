@@ -126,6 +126,18 @@ export class ApplicationsService {
 		});
 	}
 
+	async deleteApplicationNote(params: {
+		campaignId: string;
+		applicationId: string;
+		noteId: string;
+	}) {
+		await this.#repo.deleteApplicationNote({
+			campaignId: params.campaignId,
+			applicationId: params.applicationId,
+			noteId: params.noteId
+		});
+	}
+
 	/**
 	 * Fetches and returns the list of active applications for a specified campaign.
 	 */

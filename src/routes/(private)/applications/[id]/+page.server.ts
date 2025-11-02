@@ -4,15 +4,13 @@ import { extractFormFromRequest } from '$lib/forms';
 import { logger } from '$lib/logging.server';
 import { getDefaultCampaign } from '$lib/campaigns/queries.remote';
 import { authenticateUser } from '$lib/auth/queries.remote';
+import { getApplication } from '$lib/applications/queries.remote';
 
-export const load = async ({ params, locals }) => {
-	const applicationId = params.id;
+export const load = async ({ params }) => {
+	await authenticateUser();
+	await getDefaultCampaign();
 
-	const defaultCampaign = await getDefaultCampaign();
-
-	const campaignId = defaultCampaign.id;
-
-	const application = await locals.appsSvc.getApplication(campaignId, applicationId);
+	const application = await getApplication(params.id);
 
 	return {
 		application

@@ -5,11 +5,13 @@ import { logger } from '$lib/logging.server';
 import { applicationDtoStatus } from '$lib/applications/types';
 import { getDefaultCampaign } from '$lib/campaigns/queries.remote';
 import { authenticateUser } from '$lib/auth/queries.remote';
+import { getApplication } from '$lib/applications/queries.remote';
 
-export const load = async ({ locals, params }) => {
-	const defaultCampaign = await getDefaultCampaign();
+export const load = async ({ params }) => {
+	await authenticateUser();
+	await getDefaultCampaign();
 
-	const application = await locals.appsSvc.getApplication(defaultCampaign.id, params.id);
+	const application = await getApplication(params.id);
 
 	return {
 		application
