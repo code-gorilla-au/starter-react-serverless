@@ -47,7 +47,7 @@ export const actions = {
 
 			const formData = await extractFormFromRequest(request, addApplicationNoteSchema);
 
-			await locals.appsSvc.addNoteToApplication(
+			await locals.appsSvc.AddApplicationNote(
 				defaultCampaign.id,
 				formData.applicationId,
 				formData.note
