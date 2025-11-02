@@ -3,12 +3,12 @@ import { prettifyError, z, ZodError } from 'zod/v4';
 import { taskStatusDtoSchema } from '$lib/applications/types';
 import { extractFormFromRequest } from '$lib/forms';
 import { authenticateUser } from '$lib/auth/queries.remote';
-import { getApplication } from '$lib/applications/queries.remote';
+import { getApplication, getTask } from '$lib/applications/queries.remote';
 
-export const load = async ({ locals, params }) => {
+export const load = async ({ params }) => {
 	await authenticateUser();
 
-	const task = await locals.appsSvc.getTask({
+	const task = await getTask({
 		applicationId: params.id,
 		taskId: params.taskId
 	});
