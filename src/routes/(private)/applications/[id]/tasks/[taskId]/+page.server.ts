@@ -3,6 +3,7 @@ import { prettifyError, z, ZodError } from 'zod/v4';
 import { taskStatusDtoSchema } from '$lib/applications/types';
 import { extractFormFromRequest } from '$lib/forms';
 import { authenticateUser } from '$lib/auth/queries.remote';
+import { getApplication } from '$lib/applications/queries.remote';
 
 export const load = async ({ locals, params }) => {
 	await authenticateUser();
@@ -59,11 +60,13 @@ export const actions = {
 		}
 
 		try {
+			const application = await getApplication(params?.id as string);
+
 			const formData = await extractFormFromRequest(request, updateTaskNoteSchema);
 
 			await locals.appsSvc.updateTaskNote({
 				taskId: params?.taskId,
-				applicationId: params?.id as string,
+				applicationId: application.id,
 				noteId: formData.noteId,
 				note: formData.content
 			});

@@ -74,7 +74,8 @@
 			<span class="text-sm">Due date</span>
 			<DatePicker bind:value={formData.dueDate} />
 		</div>
-		<div class="my-5 flex items-center justify-end">
+		<div class="my-5 flex items-center justify-end gap-2">
+			<Button type="button" variant="destructive">Delete</Button>
 			<Button type="submit">Update</Button>
 		</div>
 	</form>

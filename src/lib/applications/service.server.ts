@@ -286,6 +286,13 @@ export class ApplicationsService {
 			throw model.error;
 		}
 	}
+
+	/**
+	 * Deletes a task associated with the specified application.
+	 */
+	async deleteTask(applicationId: string, taskId: string) {
+		await this.#repo.deleteTask(applicationId, taskId);
+	}
 }
 
 /**
