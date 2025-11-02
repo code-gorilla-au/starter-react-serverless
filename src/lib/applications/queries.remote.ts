@@ -5,6 +5,9 @@ import { getDefaultCampaign } from '$lib/campaigns/queries.remote';
 import { error } from '@sveltejs/kit';
 import { logger } from '$lib/logging.server';
 
+/**
+ * Authenticates a user and retrieves a list of complete applications for the default campaign.
+ */
 export const getCompleteApplications = query(async () => {
 	await authenticateUser();
 	const defaultCampaign = await getDefaultCampaign();
@@ -14,6 +17,9 @@ export const getCompleteApplications = query(async () => {
 	return await appsSvc.getCompleteApplications(defaultCampaign.id);
 });
 
+/**
+ * Authenticates user and retrieves the active applications for the authenticated user based on the default campaign ID.
+ */
 export const getActiveApplications = query(async () => {
 	await authenticateUser();
 	const defaultCampaign = await getDefaultCampaign();
@@ -23,6 +29,9 @@ export const getActiveApplications = query(async () => {
 	return await appsSvc.getActiveApplications(defaultCampaign.id);
 });
 
+/**
+ * Authenticates a user and returns an application by id based on the default campaign.
+ */
 export const getApplication = query(z.string(), async (applicationId) => {
 	await authenticateUser();
 	const defaultCampaign = await getDefaultCampaign();
@@ -39,6 +48,9 @@ export const getApplication = query(z.string(), async (applicationId) => {
 	}
 });
 
+/**
+ * Authenticates a user and retrieves a task by application id and task id.
+ */
 export const getTask = query(
 	z.object({ applicationId: z.string(), taskId: z.string() }),
 	async ({ applicationId, taskId }) => {
@@ -51,6 +63,9 @@ export const getTask = query(
 	}
 );
 
+/**
+ * Authenticates a user and deletes applications by campaign id and application ids.
+ */
 export const deleteApplications = command(
 	z.object({
 		campaignId: z.string(),
@@ -65,6 +80,9 @@ export const deleteApplications = command(
 	}
 );
 
+/**
+ * Authenticates a user and deletes a task by application id and task id.
+ */
 export const deleteTask = command(
 	z.object({
 		applicationId: z.string(),
