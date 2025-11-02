@@ -4,18 +4,6 @@ import { extractFormFromRequest } from '$lib/forms';
 import { logger } from '$lib/logging.server';
 import { getDefaultCampaign } from '$lib/campaigns/queries.remote';
 import { authenticateUser } from '$lib/auth/queries.remote';
-import { getApplication } from '$lib/applications/queries.remote';
-
-export const load = async ({ params }) => {
-	await authenticateUser();
-	await getDefaultCampaign();
-
-	const application = await getApplication(params.id);
-
-	return {
-		application
-	};
-};
 
 const addApplicationNoteSchema = z.object({
 	note: z.string(),
