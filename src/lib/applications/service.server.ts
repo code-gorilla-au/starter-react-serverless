@@ -103,8 +103,8 @@ export class ApplicationsService {
 	/**
 	 * Adds a note to a specific application within a campaign.
 	 */
-	async addNoteToApplication(campaignId: string, applicationId: string, content: string) {
-		await this.#repo.addNoteToApplication(campaignId, applicationId, content);
+	async addApplicationNote(campaignId: string, applicationId: string, content: string) {
+		await this.#repo.insertApplicationNote(campaignId, applicationId, content);
 	}
 
 	/**
@@ -123,6 +123,18 @@ export class ApplicationsService {
 				id: params.noteId,
 				content: params.content
 			}
+		});
+	}
+
+	async deleteApplicationNote(params: {
+		campaignId: string;
+		applicationId: string;
+		noteId: string;
+	}) {
+		await this.#repo.deleteApplicationNote({
+			campaignId: params.campaignId,
+			applicationId: params.applicationId,
+			noteId: params.noteId
 		});
 	}
 
@@ -273,6 +285,13 @@ export class ApplicationsService {
 		if (model.error) {
 			throw model.error;
 		}
+	}
+
+	/**
+	 * Deletes a task associated with the specified application.
+	 */
+	async deleteTask(applicationId: string, taskId: string) {
+		await this.#repo.deleteTask(applicationId, taskId);
 	}
 }
 
