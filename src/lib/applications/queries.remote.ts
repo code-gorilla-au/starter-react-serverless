@@ -39,6 +39,18 @@ export const getApplication = query(z.string(), async (applicationId) => {
 	}
 });
 
+export const getTask = query(
+	z.object({ applicationId: z.string(), taskId: z.string() }),
+	async ({ applicationId, taskId }) => {
+		await authenticateUser();
+		const application = await getApplication(applicationId);
+		const event = getRequestEvent();
+
+		const { appsSvc } = event.locals;
+		return appsSvc.getTask({ applicationId: application.id, taskId });
+	}
+);
+
 export const deleteApplications = command(
 	z.object({
 		campaignId: z.string(),
@@ -53,7 +65,7 @@ export const deleteApplications = command(
 	}
 );
 
-export const deleteApplicationTask = command(
+export const deleteTask = command(
 	z.object({
 		applicationId: z.string(),
 		taskId: z.string()
