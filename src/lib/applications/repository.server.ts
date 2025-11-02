@@ -36,7 +36,11 @@ export interface ApplicationRepository {
 	): Promise<StoreAction<ApplicationEntity>>;
 	deleteApplication(params: { campaignId: string; applicationId: string }): Promise<StoreAction>;
 	getTasksForApplication(applicationId: string): Promise<StoreAction<TaskEntity[]>>;
-	addApplicationNote(campaignId: string, applicationId: string, content: string): Promise<void>;
+	insertApplicationNote(
+		campaignId: string,
+		applicationId: string,
+		content: string
+	): Promise<void>;
 	updateApplicationNote(params: {
 		campaignId: string;
 		applicationId: string;
@@ -61,6 +65,7 @@ export interface ApplicationRepository {
 	updateTask(
 		updatedTask: Omit<TaskEntity, 'createdAt' | 'updatedAt' | 'notes'>
 	): Promise<StoreAction<TaskEntity>>;
+	deleteTask(applicationId: string, taskId: string): Promise<StoreAction>;
 	bulkDeleteTask(applicationId: string, tasks: TaskEntity[]): Promise<StoreAction>;
 	updateTaskNote(params: {
 		taskId: string;
@@ -148,7 +153,7 @@ export class ApplicationDBRepo implements ApplicationRepository {
 	/**
 	 * Adds a note to a specific application within a campaign.
 	 */
-	async addApplicationNote(campaignId: string, applicationId: string, content: string) {
+	async insertApplicationNote(campaignId: string, applicationId: string, content: string) {
 		this.#log.debug({ campaignId, applicationId }, 'adding note to application');
 
 		const note: NotesEntity = {
@@ -337,6 +342,22 @@ export class ApplicationDBRepo implements ApplicationRepository {
 		const cmd = applicationEntity
 			.build(DeleteItemCommand)
 			.key({ campaignId: params.campaignId, id: params.applicationId });
+
+		await cmd.send();
+
+		return {
+			data: undefined
+		};
+	}
+
+	/**
+	 * Deletes a specific task from the system.
+	 */
+	async deleteTask(applicationId: string, taskId: string): Promise<StoreAction> {
+		const cmd = taskEntity.build(DeleteItemCommand).key({
+			applicationId,
+			id: taskId
+		});
 
 		await cmd.send();
 
