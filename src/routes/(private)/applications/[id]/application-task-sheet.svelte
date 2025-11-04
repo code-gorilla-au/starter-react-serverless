@@ -38,7 +38,12 @@
 	</Sheet.Root>
 {:else}
 	<Sheet.Root bind:open>
-		<Sheet.Content side="right">
+		<Sheet.Content
+			onInteractOutside={() => {
+				open = false;
+			}}
+			side="right"
+		>
 			<Sheet.Header>
 				<Sheet.Title class="flex items-center gap-2">
 					<Button onclick={routeToTaskEditPage} variant="ghost" size="sm"
