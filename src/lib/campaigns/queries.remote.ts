@@ -1,17 +1,20 @@
 import { getRequestEvent, query } from '$app/server';
 import { authenticateUser } from '$lib/auth/queries.remote';
 import { redirect } from '@sveltejs/kit';
-import { resolve } from '$app/paths';
 
 export const getDefaultCampaign = query(async () => {
-	const session = await authenticateUser();
-
 	const event = getRequestEvent();
 
-	const campaign = await event.locals.campaignSvc.getDefaultCampaign(session.userId);
+	const session = await authenticateUser();
+
+	return await event.locals.campaignSvc.getDefaultCampaign(session.userId);
+});
+
+export const getDefaultCampaignWithRedirect = query(async () => {
+	const campaign = await getDefaultCampaign();
 
 	if (!campaign) {
-		redirect(303, resolve('/campaigns/create'));
+		return redirect(303, '/campaigns/create');
 	}
 
 	return campaign;

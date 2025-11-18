@@ -3,7 +3,6 @@ import { applicationServiceFactory } from '$lib/applications/service.server';
 import { sequence } from '@sveltejs/kit/hooks';
 import { userServiceFactory } from '$lib/users/service.server';
 import { AUTH_COOKIE_NAME, AuthService } from '$lib/auth';
-import { logger } from '$lib/logging.server';
 import { campaignServiceFactory } from '$lib/campaigns/service.server';
 import { authenticateUser } from '$lib/auth/queries.remote';
 import { getDefaultCampaign } from '$lib/campaigns/queries.remote';
@@ -36,17 +35,10 @@ export const resolveRoutePaths: Handle = async ({ event, resolve }) => {
 		return redirect(303, '/login');
 	}
 
-	try {
-		await authenticateUser();
-		await getDefaultCampaign();
+	await authenticateUser();
+	await getDefaultCampaign();
 
-		return resolve(event);
-	} catch (error) {
-		const err = error as Error;
-		logger.error({ error: err.message }, 'could not verify token');
-
-		return redirect(303, '/login');
-	}
+	return resolve(event);
 };
 
 export const handle = sequence(attachLocalServices, resolveRoutePaths);
