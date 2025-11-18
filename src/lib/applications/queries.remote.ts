@@ -1,7 +1,7 @@
 import { z } from 'zod/v4';
 import { command, getRequestEvent, query } from '$app/server';
 import { authenticateUser } from '$lib/auth/queries.remote';
-import { getDefaultCampaign } from '$lib/campaigns/queries.remote';
+import { getDefaultCampaignWithRedirect } from '$lib/campaigns/queries.remote';
 import { error } from '@sveltejs/kit';
 import { logger } from '$lib/logging.server';
 
@@ -10,7 +10,7 @@ import { logger } from '$lib/logging.server';
  */
 export const getCompleteApplications = query(async () => {
 	await authenticateUser();
-	const defaultCampaign = await getDefaultCampaign();
+	const defaultCampaign = await getDefaultCampaignWithRedirect();
 
 	const event = getRequestEvent();
 	const { appsSvc } = event.locals;
@@ -22,7 +22,7 @@ export const getCompleteApplications = query(async () => {
  */
 export const getActiveApplications = query(async () => {
 	await authenticateUser();
-	const defaultCampaign = await getDefaultCampaign();
+	const defaultCampaign = await getDefaultCampaignWithRedirect();
 
 	const event = getRequestEvent();
 	const { appsSvc } = event.locals;
@@ -34,7 +34,7 @@ export const getActiveApplications = query(async () => {
  */
 export const getApplication = query(z.string(), async (applicationId) => {
 	await authenticateUser();
-	const defaultCampaign = await getDefaultCampaign();
+	const defaultCampaign = await getDefaultCampaignWithRedirect();
 
 	const event = getRequestEvent();
 	const { appsSvc } = event.locals;

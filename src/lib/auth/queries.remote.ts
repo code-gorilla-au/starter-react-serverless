@@ -35,7 +35,7 @@ export const authenticateUser = query(async () => {
 		return await event.locals.authSvc.verify(authToken);
 	} catch (error) {
 		const err = error as Error;
-		logger.error({ error: err.message }, 'could not verify token');
+		logger.error({ error: err.message }, 'could not verify token, redirecting');
 
 		return redirect(303, '/login');
 	}
