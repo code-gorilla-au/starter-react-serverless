@@ -10,7 +10,7 @@ export const getDefaultCampaign = query(async () => {
 	return await event.locals.campaignSvc.getDefaultCampaign(session.userId);
 });
 
-export const getDefaultCampaignWithRedirect = query(async () => {
+export const getDefaultCampaignOrRedirect = query(async () => {
 	const campaign = await getDefaultCampaign();
 
 	if (!campaign) {

@@ -1,10 +1,10 @@
 import { type Actions, error, redirect } from '@sveltejs/kit';
 import { authenticateUser } from '$lib/auth/queries.remote';
-import { getDefaultCampaign } from '$lib/campaigns/queries.remote';
+import { getDefaultCampaignOrRedirect } from '$lib/campaigns/queries.remote';
 
 export const load = async ({ locals, params }) => {
 	await authenticateUser();
-	const defaultCampaign = await getDefaultCampaign();
+	const defaultCampaign = await getDefaultCampaignOrRedirect();
 
 	if (!params.id) {
 		error(404, 'Application Not found');
@@ -20,7 +20,7 @@ export const load = async ({ locals, params }) => {
 export const actions = {
 	deleteApplication: async ({ params, locals }) => {
 		await authenticateUser();
-		const defaultCampaign = await getDefaultCampaign();
+		const defaultCampaign = await getDefaultCampaignOrRedirect();
 
 		if (!params.id) {
 			error(404, 'Application Not found');

@@ -3,7 +3,7 @@ import { extractFormFromRequest } from '$lib/forms';
 import { prettifyError, ZodError, z } from 'zod/v4';
 import { logger } from '$lib/logging.server';
 import { applicationDtoStatus } from '$lib/applications/types';
-import { getDefaultCampaign } from '$lib/campaigns/queries.remote';
+import { getDefaultCampaign, getDefaultCampaignOrRedirect } from '$lib/campaigns/queries.remote';
 import { authenticateUser } from '$lib/auth/queries.remote';
 import { getApplication } from '$lib/applications/queries.remote';
 
@@ -48,7 +48,7 @@ export const actions = {
 	 */
 	updateApplication: async ({ locals, request, params }) => {
 		await authenticateUser();
-		const defaultCampaign = await getDefaultCampaign();
+		const defaultCampaign = await getDefaultCampaignOrRedirect();
 
 		if (!params.id) {
 			return fail(400, { message: 'Application id is required' });
@@ -80,7 +80,7 @@ export const actions = {
 	},
 	updateApplicationNote: async ({ locals, request, params }) => {
 		await authenticateUser();
-		const defaultCampaign = await getDefaultCampaign();
+		const defaultCampaign = await getDefaultCampaignOrRedirect();
 
 		if (!params.id) {
 			return fail(400, { message: 'Application id is required' });
