@@ -2,7 +2,7 @@ import { type Actions, fail } from '@sveltejs/kit';
 import { z } from 'zod/v4';
 import { extractFormFromRequest } from '$lib/forms';
 import { logger } from '$lib/logging.server';
-import { getDefaultCampaign } from '$lib/campaigns/queries.remote';
+import { getDefaultCampaign, getDefaultCampaignWithRedirect } from '$lib/campaigns/queries.remote';
 import { authenticateUser } from '$lib/auth/queries.remote';
 
 const addApplicationNoteSchema = z.object({
@@ -29,7 +29,7 @@ export const actions = {
 	 */
 	addApplicationNote: async ({ locals, request }) => {
 		try {
-			const defaultCampaign = await getDefaultCampaign();
+			const defaultCampaign = await getDefaultCampaignWithRedirect();
 
 			const formData = await extractFormFromRequest(request, addApplicationNoteSchema);
 
