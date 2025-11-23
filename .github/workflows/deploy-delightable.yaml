@@ -40,4 +40,4 @@ jobs:
               run: aws sts get-caller-identity
 
             - name: Deploy app
-              run: npx sst deploy --stage production
+              run: npm run deploy:prod

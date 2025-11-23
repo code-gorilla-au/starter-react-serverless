@@ -20,9 +20,12 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"preview": "vite preview",
 		"test": "npm run test:unit -- --run",
-		"test:unit": "vitest"
+		"test:unit": "vitest",
+		"deploy:prod": "npx sst deploy --stage production",
+		"deploy:cleanup": "tsx src/scripts/cleanup-old-assets.ts"
 	},
 	"devDependencies": {
+		"@aws-sdk/client-s3": "^3.937.0",
 		"@eslint/compat": "^1.4.1",
 		"@eslint/js": "^9.39.0",
 		"@internationalized/date": "^3.10.0",
@@ -53,6 +56,7 @@
 		"tailwind-merge": "^3.3.1",
 		"tailwind-variants": "^3.1.1",
 		"tailwindcss": "^4.0.0",
+		"tsx": "^4.19.2",
 		"tw-animate-css": "^1.3.8",
 		"typescript": "^5.9.3",
 		"typescript-eslint": "^8.46.2",
