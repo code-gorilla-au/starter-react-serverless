@@ -39,6 +39,7 @@
 		"@types/bcrypt": "^6.0.0",
 		"@types/node": "^24",
 		"@vitest/browser": "^4.0.6",
+		"aws-sdk-client-mock": "^4.1.0",
 		"bits-ui": "^2.14.3",
 		"clsx": "^2.1.1",
 		"eslint": "^9.39.0",

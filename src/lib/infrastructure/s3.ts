@@ -6,6 +6,7 @@ import {
 	S3Client
 } from '@aws-sdk/client-s3';
 import type { Logger } from 'pino';
+import { isAfter } from 'date-fns';
 
 export type IteratorResults = {
 	files: string[];
@@ -19,7 +20,7 @@ export type DeleteResults = {
 
 export type Filter = {
 	ignore?: string[];
-	olderThan: Date;
+	olderThan?: Date;
 };
 
 export class DeploymentAssetCleanup {
@@ -34,8 +35,13 @@ export class DeploymentAssetCleanup {
 		this.#bucket = bucket;
 	}
 
-	async cleanup(filter?: Filter): Promise<void> {
+	async cleanup(dryRun: boolean, filter?: Filter): Promise<DeleteResults> {
 		let continuationToken: string | undefined = undefined;
+
+		const runResults: DeleteResults = {
+			deleted: [],
+			errors: []
+		};
 
 		do {
 			const { files, nextContinuationToken } = await this.queryAssets(
@@ -44,12 +50,19 @@ export class DeploymentAssetCleanup {
 			);
 			continuationToken = nextContinuationToken;
 
+			if (dryRun) {
+				this.#log.info(`dry run: ${files.length} assets found`);
+				console.log(files);
+				continue;
+			}
+
 			const results = await this.removeAssets(files);
 
-			if (results.errors.length) {
-				throw new Error(`Failed to delete ${results.errors.length} assets`);
-			}
+			runResults.deleted.push(...results.deleted);
+			runResults.errors.push(...results.errors);
 		} while (continuationToken);
+
+		return runResults;
 	}
 
 	private async removeAssets(keys: string[]): Promise<DeleteResults> {
@@ -60,11 +73,11 @@ export class DeploymentAssetCleanup {
 
 		const response = await this.#s3Client.send(cmd);
 		this.#log.debug(`deleted: ${response?.Deleted?.length}`);
-		this.#log.debug(`errors: ${response?.Errors?.length}`);
+		this.#log.debug(`errors: ${response?.Errors?.length ?? 0}`);
 
 		const deleted =
 			response?.Deleted?.map((d) => {
-				return `${d.Key}`;
+				return d.Key as string;
 			}) ?? [];
 
 		const errors =
@@ -101,6 +114,8 @@ export class DeploymentAssetCleanup {
 
 		const results: string[] = this.applyFilter(response.Contents, filter);
 
+		this.#log.debug({ results }, 'query results');
+
 		return {
 			files: results,
 			nextContinuationToken: response.NextContinuationToken
@@ -118,44 +133,32 @@ export class DeploymentAssetCleanup {
 		}
 
 		for (const item of contents) {
-			if (!item.Key) {
+			if (this.shouldFilterFile(item, filter)) {
 				continue;
 			}
 
-			if (!filter) {
-				results.push(item.Key);
-				continue;
-			}
-
-			if (this.applyFilterIgnore(item.Key, filter.ignore ?? [])) {
-				results.push(item.Key);
-				continue;
-			}
-
-			if (filter.olderThan) {
-				if (item.LastModified && item.LastModified < filter.olderThan) {
-					results.push(item.Key);
-					continue;
-				}
-			}
-
-			results.push(item.Key);
+			results.push(item.Key as string);
 		}
 
 		return results;
 	}
 
 	private shouldFilterFile(item: _Object, filter?: Filter): boolean {
-		if (!filter || !item.Key) {
+		if (!item.Key) {
+			// skip if not a valid object
+			return true;
+		}
+
+		if (!filter) {
 			return false;
 		}
 
-		if (this.applyFilterIgnore(item?.Key, filter.ignore ?? [])) {
+		if (this.shouldIgnoreByMatch(item?.Key, filter.ignore ?? [])) {
 			return true;
 		}
 
 		if (filter.olderThan) {
-			if (item.LastModified && item.LastModified < filter.olderThan) {
+			if (item.LastModified && isAfter(item.LastModified, filter.olderThan)) {
 				return true;
 			}
 		}
@@ -163,11 +166,7 @@ export class DeploymentAssetCleanup {
 		return false;
 	}
 
-	private applyFilterIgnore(key: string, ignoreMatches: string[]): boolean {
-		if (ignoreMatches.length) {
-			return false;
-		}
-
+	private shouldIgnoreByMatch(key: string, ignoreMatches: string[]): boolean {
 		let ignoreFile: boolean = false;
 
 		for (const ignore of ignoreMatches) {
