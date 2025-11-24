@@ -35,7 +35,7 @@
 <div class="flex w-full flex-wrap gap-3">
 	<div class="flex flex-1 flex-col gap-3">
 		<ApplicationDetails {application} />
-		<ApplicationNotes {application} campaignId={defaultCampaign?.id ?? ''} />
+		<ApplicationNotes {application} />
 	</div>
 	<TaskTable applicationId={application.id} {tasks} onSelectTask={setSelectedTask} />
 </div>

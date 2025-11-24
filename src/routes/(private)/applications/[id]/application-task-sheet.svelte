@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { applyAction, enhance } from '$app/forms';
 	import * as Sheet from '$components/ui/sheet';
 	import { Button } from '$components/ui/button';
 	import type { TaskDto } from '$lib/applications/types';
@@ -7,9 +6,10 @@
 	import { prettyDate, truncate } from '$lib/hooks/formats';
 	import { BaseInput } from '$components/base-input';
 	import { Pencil } from '@lucide/svelte';
-	import { goto, invalidateAll } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { Separator } from '$components/ui/separator';
 	import { toast } from 'svelte-sonner';
+	import { addTaskNote } from '$lib/applications/queries.remote';
 
 	type Props = {
 		open: boolean;
@@ -26,6 +26,8 @@
 
 		await goto(taskUrl);
 	}
+
+	let disableForm = $state(false);
 </script>
 
 {#if !task?.id}
@@ -74,27 +76,32 @@
 			<div class="p-3">
 				<Separator />
 				<form
-					method="POST"
-					action="?/addTaskNote"
-					class="flex items-center justify-between gap-2"
-					use:enhance={() => {
-						return async ({ result }) => {
-							if (result.type === 'success') {
-								toast.success('Note added', { position: 'top-center' });
-								await invalidateAll();
-							}
+					{...addTaskNote.enhance(async ({ form, submit }) => {
+						disableForm = true;
 
-							return await applyAction(result);
-						};
-					}}
+						await submit();
+						form.reset();
+						toast.success('Note added', { position: 'top-center' });
+
+						disableForm = false;
+					})}
+					class="flex flex-col"
 				>
-					<BaseInput required name="note" placeholder="Add note" />
-					<input hidden name="taskId" value={task.id} />
-					<input type="hidden" name="applicationId" value={applicationId} />
+					<div class="flex items-center justify-between gap-2">
+						<BaseInput required name="content" placeholder="Add note" />
+						<input hidden name="taskId" value={task.id} />
+						<input type="hidden" name="applicationId" value={applicationId} />
 
-					<Sheet.Close>
-						<Button size="sm" class="text-xs" type="submit">+ Add</Button>
-					</Sheet.Close>
+						<Sheet.Close>
+							<Button disabled={disableForm} size="sm" class="text-xs" type="submit">
+								+ Add
+							</Button>
+						</Sheet.Close>
+					</div>
+
+					{#each addTaskNote.fields.allIssues() ?? [] as issue (issue)}
+						<p>{issue.message}</p>
+					{/each}
 				</form>
 			</div>
 		</Sheet.Content>

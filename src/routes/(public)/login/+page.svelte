@@ -2,9 +2,10 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card';
 	import { BaseInput } from '$lib/components/base-input';
-	import { type PageProps } from './$types';
 
-	let { form }: PageProps = $props();
+	import { login } from './login.remote';
+
+	let disabled = $state(false);
 </script>
 
 <Card.Root class="mx-auto mt-20 w-full max-w-sm sm:mt-40">
@@ -13,7 +14,15 @@
 		<Card.Description>Enter your email below to login to your account</Card.Description>
 	</Card.Header>
 	<Card.Content>
-		<form method="POST" class="grid gap-2">
+		<form
+			{...login.enhance(async ({ submit, form }) => {
+				disabled = true;
+				await submit();
+				form.reset();
+				disabled = false;
+			})}
+			class="grid gap-2"
+		>
 			<BaseInput name="email" id="email" label="Email" required />
 			<BaseInput
 				autocomplete="off"
@@ -23,13 +32,15 @@
 				label="Password"
 				required
 			></BaseInput>
-			{#if form?.error}
+			{#if login.fields.allIssues()}
 				<div class="card-destructive">
 					<p>Username or password is invalid</p>
 				</div>
 			{/if}
 
-			<Button type="submit" class="my-2 w-full">Login</Button>
+			<Button {disabled} type="submit" class="my-2 w-full">
+				{disabled ? 'Logging in...' : 'Login'}
+			</Button>
 		</form>
 		<div class="mt-4 text-center text-sm">
 			Don't have an account?
