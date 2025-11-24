@@ -40,4 +40,7 @@ jobs:
               run: aws sts get-caller-identity
 
             - name: Deploy app
-              run: npx sst deploy --stage production
+              run: npm run deploy:prod
+
+            - name: Cleanup
+              run: npm run deploy:cleanup -- --dry-run --bucket sst-state-cfaonvdvftvr
