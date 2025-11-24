@@ -1,5 +1,5 @@
 import { z } from 'zod/v4';
-import { command, getRequestEvent, query } from '$app/server';
+import { command, form, getRequestEvent, query } from '$app/server';
 import { authenticateUser } from '$lib/auth/queries.remote';
 import { getDefaultCampaignOrRedirect } from '$lib/campaigns/queries.remote';
 import { error } from '@sveltejs/kit';
@@ -80,6 +80,24 @@ export const deleteApplications = command(
 	}
 );
 
+export const addApplicationNote = form(
+	z.object({
+		note: z.string(),
+		applicationId: z.string().min(1)
+	}),
+	async ({ applicationId, note }) => {
+		await authenticateUser();
+		const defaultCampaign = await getDefaultCampaignOrRedirect();
+
+		const event = getRequestEvent();
+
+		const { appsSvc } = event.locals;
+		await appsSvc.addApplicationNote(defaultCampaign.id, applicationId, note);
+
+		await getApplication(applicationId).refresh();
+	}
+);
+
 /**
  * Authenticates a user and deletes a task by application id and task id.
  */
@@ -96,5 +114,29 @@ export const deleteTask = command(
 
 		const { appsSvc } = event.locals;
 		await appsSvc.deleteTask(application.id, taskId);
+	}
+);
+
+export const addApplicationTask = form(
+	z.object({
+		name: z.string().min(1),
+		dueDate: z.string().optional(),
+		applicationId: z.string().min(1)
+	}),
+	async ({ name, dueDate, applicationId }) => {
+		await authenticateUser();
+		await getDefaultCampaignOrRedirect();
+
+		const event = getRequestEvent();
+
+		const { appsSvc } = event.locals;
+
+		await appsSvc.addTaskToApplication(applicationId, {
+			name: name,
+			dueDate: z.coerce.date().optional().parse(dueDate),
+			description: ''
+		});
+
+		await getApplication(applicationId).refresh();
 	}
 );

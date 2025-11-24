@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { X } from '@lucide/svelte';
-	import { enhance, applyAction } from '$app/forms';
 	import { ScrollArea } from '$components/ui/scroll-area';
 	import { Separator } from '$components/ui/separator';
 	import * as Table from '$lib/components/ui/table/index.js';
@@ -10,7 +9,7 @@
 	import { prettyDate, truncate } from '$lib/hooks/formats';
 	import { DatePicker } from '$components/date-picker';
 	import type { DateValue } from '@internationalized/date';
-	import { toast } from 'svelte-sonner';
+	import { addApplicationTask } from '$lib/applications/queries.remote';
 
 	type Props = {
 		applicationId: string;
@@ -21,6 +20,7 @@
 	let { tasks, applicationId, onSelectTask }: Props = $props();
 
 	let showAddTaskForm = $state(false);
+	let formDisabled = $state(false);
 	let formData = $state<{ dueDate?: DateValue }>({
 		dueDate: undefined
 	});
@@ -76,23 +76,15 @@
 	{:else}
 		<form
 			class="flex items-center gap-2"
-			action="?/addApplicationTask"
-			method="POST"
-			use:enhance={() => {
-				return async ({ result, update }) => {
-					if (result.type === 'failure') {
-						const message = result?.data?.error as string;
-						toast.error('Task could not be added', {
-							description: message,
-							position: 'top-center'
-						});
-					} else {
-						update({ invalidateAll: true });
-					}
+			{...addApplicationTask.enhance(async ({ submit, form }) => {
+				formDisabled = true;
 
-					return await applyAction(result);
-				};
-			}}
+				await submit();
+				form.reset();
+
+				showAddTaskForm = false;
+				formDisabled = false;
+			})}
 		>
 			<input type="hidden" name="applicationId" value={applicationId} />
 			{#if formData.dueDate}
@@ -110,7 +102,13 @@
 				class="w-1/3"
 				bind:value={formData.dueDate}
 			/>
-			<Button size="sm" class="text-xs" type="submit">+ Add task</Button>
+			<Button disabled={formDisabled} size="sm" class="text-xs" type="submit">
+				{#if formDisabled}
+					Adding...
+				{:else}
+					+ Add task
+				{/if}
+			</Button>
 		</form>
 	{/if}
 </div>
