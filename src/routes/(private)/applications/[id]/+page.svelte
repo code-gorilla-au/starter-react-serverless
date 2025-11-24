@@ -8,12 +8,10 @@
 	import { type PageProps } from './$types';
 	import type { TaskDto } from '$lib/applications/types';
 	import { getApplication } from '$lib/applications/queries.remote';
-	import { getDefaultCampaign } from '$lib/campaigns/queries.remote';
 
 	let { params }: PageProps = $props();
 	let application = $derived(await getApplication(params.id));
 	let tasks = $derived(application?.tasks ?? []);
-	let defaultCampaign = $derived(await getDefaultCampaign());
 
 	let openTaskSheet = $state(false);
 	let selectedApplicationTask = $state<TaskDto | undefined>(undefined);
