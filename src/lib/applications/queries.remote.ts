@@ -140,3 +140,22 @@ export const addApplicationTask = form(
 		await getApplication(applicationId).refresh();
 	}
 );
+
+export const addTaskNote = form(
+	z.object({
+		content: z.string(),
+		taskId: z.string().min(1),
+		applicationId: z.string().min(1)
+	}),
+	async ({ taskId, content, applicationId }) => {
+		await authenticateUser();
+		await getDefaultCampaignOrRedirect();
+
+		const event = getRequestEvent();
+		const { appsSvc } = event.locals;
+		await appsSvc.addTaskNote({ taskId, content, applicationId });
+
+		await getApplication(applicationId).refresh();
+		await getTask({ taskId, applicationId }).refresh();
+	}
+);
