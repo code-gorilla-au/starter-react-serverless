@@ -20,7 +20,7 @@ jobs:
             AWS_ROLE_ARN: ${{secrets.AWS_DEPLOY_ROLE}}
             AWS_REGION: ap-southeast-2
         steps:
-            - uses: actions/checkout@v5
+            - uses: actions/checkout@v6
               with:
                   persist-credentials: false
 
