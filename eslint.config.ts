@@ -7,10 +7,12 @@ import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
 	{
+		ignores: ['.react-router/', 'build/']
+	},
+	{
 		files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
 		plugins: { js },
 		extends: ['js/recommended'],
-		ignores: ['./.react-router/', 'build/'],
 		languageOptions: { globals: { ...globals.browser, ...globals.node } }
 	},
 	tseslint.configs.recommended,

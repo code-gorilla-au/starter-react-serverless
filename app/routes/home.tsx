@@ -1,4 +1,3 @@
-
 import { Welcome } from '~/welcome/welcome';
 
 export function meta() {
