@@ -11,4 +11,4 @@ export const AUTH_COOKIE_NAME = '--delightable-auth';
 export type UserSession = z.infer<typeof userSessionSchema>;
 export type SessionFlashData = {
 	error: string;
-}
+};
