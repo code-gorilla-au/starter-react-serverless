@@ -10,9 +10,13 @@
 		"dev": "react-router dev",
 		"start": "react-router-serve ./build/server/index.js",
 		"format": "prettier --write .",
-		"typecheck": "react-router typegen && tsc"
+		"lint:types": "react-router typegen && tsc --noEmit",
+		"lint:files": "eslint",
+		"lint:format": "prettier --check .",
+		"lint-fix": "eslint --fix"
 	},
 	"dependencies": {
+		"@radix-ui/react-slot": "^1.2.4",
 		"@react-router/node": "7.10.1",
 		"@react-router/serve": "7.10.1",
 		"class-variance-authority": "^0.7.1",
