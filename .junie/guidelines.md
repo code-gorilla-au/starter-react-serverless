@@ -4,7 +4,7 @@ Code Style and Structure
 
 - Avoid useless comments that state the obvious.
 - Use Vitest for tests
-- avoid mocking unless absolutely necessary, and prefer to mock the smallest possible unit of code.
+- avoid mocking unless absolutely necessary and prefer to mock the smallest possible unit of code.
 - Unit Tests should be co-located to file they are testing.
 - end to end tests should be in the `__E2E__`
 - Write concise, technical TypeScript code with accurate examples.
@@ -54,4 +54,6 @@ Key Conventions
     - Use only for Web API access in small components.
     - Avoid for data fetching or state management.
 
-Follow Next.js docs for Data Fetching, Rendering, and Routing.
+Follow React router v7 docs for Data Fetching, Rendering, and Routing.
+
+
