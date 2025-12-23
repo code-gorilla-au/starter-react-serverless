@@ -1,18 +1,16 @@
 node_modules
 
+.idea
 # Output
 .output
 .vercel
 .netlify
 .wrangler
-/.svelte-kit
+.react-router
 /build
 
 # OS
 .DS_Store
-Thumbs.db
-
-# Env
 .env
 .env.local
 !.env.example
