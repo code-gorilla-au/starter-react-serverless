@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { loadServerEnv } from '~/lib/env.server';
+import { loadServerEnv } from '~/lib/env/env.server';
 
 describe('loadServerEnv()', () => {
 	it('should load server environment variables', () => {
