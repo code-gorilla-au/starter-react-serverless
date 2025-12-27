@@ -6,6 +6,10 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 export default defineConfig({
 	plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
 	test: {
-		setupFiles: ['vitest.setup.ts']
+		setupFiles: ['vitest.setup.ts'],
+		coverage: {
+			include: ['app/**/*.{ts,tsx}'],
+			exclude: ['app/components/ui/**/*.{ts,tsx}']
+		}
 	}
 });
