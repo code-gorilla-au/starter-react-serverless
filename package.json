@@ -10,6 +10,7 @@
 		"dev": "react-router dev",
 		"typegen": "react-router typegen",
 		"format": "prettier --write .",
+		"test:unit": "vitest --run",
 		"lint": "npm run typegen && npx npm-run-all2 --parallel lint:*",
 		"lint-fix": "eslint --fix",
 		"lint:files": "eslint",
