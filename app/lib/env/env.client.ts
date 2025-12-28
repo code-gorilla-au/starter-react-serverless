@@ -14,7 +14,7 @@ export type ClientEnv = z.infer<typeof clientEnv>;
  * Loads and validates the client environment variables into a structured object.
  */
 export function loadClientEnv() {
-	const env = {
+	const env: ClientEnv = {
 		appName: import.meta.env.VITE_APP_NAME,
 		logLevel: import.meta.env.VITE_LOG_LEVEL
 	};
