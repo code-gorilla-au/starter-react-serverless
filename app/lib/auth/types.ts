@@ -7,7 +7,7 @@ export const userSessionSchema = z.object({
 	userId: z.string()
 });
 
-export const AUTH_COOKIE_NAME = '--delightable-auth';
+export const AUTH_COOKIE_NAME = '--cookie-auth';
 export type UserSession = z.infer<typeof userSessionSchema>;
 export type SessionFlashData = {
 	error: string;

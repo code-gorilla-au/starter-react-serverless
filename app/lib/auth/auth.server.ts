@@ -1,5 +1,5 @@
 import { AUTH_COOKIE_NAME, type SessionFlashData, type UserSession } from '~/lib/auth/types';
-import { loadServerEnv } from '~/lib/env.server';
+import { loadServerEnv } from '~/lib/env/env.server';
 import { createCookieSessionStorage } from 'react-router';
 
 const appConfig = loadServerEnv();

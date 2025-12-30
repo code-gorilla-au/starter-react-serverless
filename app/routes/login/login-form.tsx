@@ -10,7 +10,6 @@ import {
 } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
-import { Checkbox } from '~/components/ui/checkbox';
 
 interface LoginFormProps {
 	error?: string;
@@ -54,15 +53,6 @@ export function LoginForm({ error, isLoading }: LoginFormProps) {
 							required
 							autoComplete="current-password"
 						/>
-					</div>
-					<div className="flex items-center space-x-2">
-						<Checkbox id="remember" name="remember" />
-						<Label
-							htmlFor="remember"
-							className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-						>
-							Remember me
-						</Label>
 					</div>
 					{error && <p className="text-sm font-medium text-destructive">{error}</p>}
 				</CardContent>

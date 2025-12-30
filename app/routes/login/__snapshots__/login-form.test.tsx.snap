@@ -1,0 +1,118 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`LoginForm > ui regression test > should match snapshot 1`] = `
+<div>
+  <div
+    class="flex flex-col gap-6 rounded-xl border bg-card py-6 text-card-foreground shadow-sm mx-auto w-full max-w-md"
+    data-slot="card"
+  >
+    <div
+      class="@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6"
+      data-slot="card-header"
+    >
+      <div
+        class="font-semibold text-2xl"
+        data-slot="card-title"
+      >
+        Login
+      </div>
+      <div
+        class="text-sm text-muted-foreground"
+        data-slot="card-description"
+      >
+        Enter your email below to login to your account
+      </div>
+    </div>
+    <form
+      action="/login"
+      data-discover="true"
+      method="post"
+    >
+      <div
+        class="px-6 grid gap-4"
+        data-slot="card-content"
+      >
+        <div
+          class="grid gap-2"
+        >
+          <label
+            class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+            data-slot="label"
+            for="email"
+          >
+            Email
+          </label>
+          <input
+            autocomplete="email"
+            class="h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40"
+            data-slot="input"
+            id="email"
+            name="email"
+            placeholder="m@example.com"
+            required=""
+            type="email"
+          />
+        </div>
+        <div
+          class="grid gap-2"
+        >
+          <div
+            class="flex items-center justify-between"
+          >
+            <label
+              class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+              data-slot="label"
+              for="password"
+            >
+              Password
+            </label>
+            <a
+              class="text-sm text-muted-foreground hover:underline"
+              data-discover="true"
+              href="/forgot-password"
+            >
+              Forgot password?
+            </a>
+          </div>
+          <input
+            autocomplete="current-password"
+            class="h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40"
+            data-slot="input"
+            id="password"
+            name="password"
+            required=""
+            type="password"
+          />
+        </div>
+      </div>
+      <div
+        class="items-center px-6 [.border-t]:pt-6 flex flex-col gap-4"
+        data-slot="card-footer"
+      >
+        <button
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 has-[>svg]:px-3 w-full"
+          data-size="default"
+          data-slot="button"
+          data-variant="default"
+          type="submit"
+        >
+          Login
+        </button>
+        <div
+          class="text-center text-sm"
+        >
+          Don't have an account?
+           
+          <a
+            class="underline underline-offset-4"
+            data-discover="true"
+            href="/register"
+          >
+            Sign up
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+`;

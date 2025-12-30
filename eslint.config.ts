@@ -7,13 +7,13 @@ import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
 	{
-		ignores: ['.react-router/', 'build/', ".sst", ".dynamodb"]
+		ignores: ['.react-router/', 'build/', '.sst', '.dynamodb']
 	},
 	{
 		files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
 		plugins: { js },
 		extends: ['js/recommended'],
-		languageOptions: { globals: { ...globals.browser, ...globals.node } },
+		languageOptions: { globals: { ...globals.browser, ...globals.node } }
 	},
 	tseslint.configs.recommended,
 	{
