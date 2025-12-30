@@ -3,9 +3,10 @@ import { beforeAll, afterAll, vi } from 'vitest';
 beforeAll(() => {
 	vi.stubEnv('DOMAIN', '.localhost');
 	vi.stubEnv('VITE_LOG_LEVEL', 'debug');
+	vi.stubEnv('VITE_APP_NAME', 'React Starter');
 	vi.stubEnv('SECRET_APP_SIGNING_TOKEN', 'some-secret-token');
 	vi.stubEnv('LOCAL_DYNAMODB_ENDPOINT', 'http://localhost:8110');
-	vi.stubEnv('APP_TABLE_NAME', 'delightable');
+	vi.stubEnv('APP_TABLE_NAME', 'react starter');
 });
 
 afterAll(() => {

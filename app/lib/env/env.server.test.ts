@@ -6,7 +6,7 @@ describe('loadServerEnv()', () => {
 		const config = loadServerEnv();
 
 		expect(config).toEqual({
-			appTableName: 'delightable',
+			appTableName: 'react starter',
 			domain: '.localhost',
 			dynamoEndpoint: 'http://localhost:8110',
 			logLevel: 'debug',
