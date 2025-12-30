@@ -8,7 +8,7 @@ describe('LoginForm', async () => {
 		const Stub = createRoutesStub([
 			{
 				path: '/login',
-				// @ts-expect-error - types will not match, docs mention to use this.
+				// @ts-expect-error - types will not match, react router docs mention using this.
 				Component: LoginForm
 			}
 		]);
