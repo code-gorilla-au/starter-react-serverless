@@ -3,13 +3,14 @@ import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vitest/config';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-export default defineConfig({
-	plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
+export const shared = {
+	plugins: [tailwindcss(), tsconfigPaths()],
 	test: {
-		setupFiles: ['vitest.setup.ts'],
-		coverage: {
-			include: ['app/**/*.{ts,tsx}'],
-			exclude: ['app/components/ui/**/*.{ts,tsx}']
-		}
+		setupFiles: ['vitest.setup.ts']
 	}
+};
+
+export default defineConfig({
+	...shared,
+	plugins: [...shared.plugins, reactRouter()]
 });
