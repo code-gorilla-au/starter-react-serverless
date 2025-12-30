@@ -16,7 +16,7 @@ jobs:
             BRANCH: ${{ github.head_ref || github.ref_name }}
             REPO_URL: ${{ github.repository }}
         steps:
-            - uses: actions/checkout@v5
+            - uses: actions/checkout@v6
 
             - name: Setup node
               uses: actions/setup-node@v6
