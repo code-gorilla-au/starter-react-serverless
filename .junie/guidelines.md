@@ -161,7 +161,6 @@ describe('LoginForm', async () => {
 		});
 	});
 });
-
 ```
 
 ### Example unit test for server side code
@@ -183,6 +182,4 @@ describe('loadServerEnv()', () => {
 		});
 	});
 });
-
-
 ```
